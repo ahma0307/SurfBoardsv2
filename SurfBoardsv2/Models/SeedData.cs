@@ -34,9 +34,10 @@ namespace SurfBoardsv2.Models
                        Price = 565,
                        Equipment = "",
                        ImageFileName = "",
-                       
-                       
-                       
+                       IsAvailable = true,
+
+
+
 
                    },
 
@@ -51,8 +52,9 @@ namespace SurfBoardsv2.Models
                        Price = 565,
                        Equipment = "",
                        ImageFileName = "",
-                       
-                       
+                       IsAvailable = true,
+
+
                    },
 
                    new Board
@@ -66,8 +68,9 @@ namespace SurfBoardsv2.Models
                        Price = 565,
                        Equipment = "",
                        ImageFileName = "",
-                       
-                       
+                       IsAvailable = true,
+
+
                    },
                    new Board
                    {
@@ -80,8 +83,9 @@ namespace SurfBoardsv2.Models
                        Price = 565,
                        Equipment = "",
                        ImageFileName = "",
-                       
-                       
+                       IsAvailable = true,
+
+
                    },
                    new Board
                    {
@@ -94,8 +98,9 @@ namespace SurfBoardsv2.Models
                        Price = 565,
                        Equipment = "",
                        ImageFileName = "",
-                       
-                       
+                       IsAvailable = true,
+
+
                    },
                    new Board
                    {
@@ -108,8 +113,9 @@ namespace SurfBoardsv2.Models
                        Price = 565,
                        Equipment = "",
                        ImageFileName = "",
-                       
-                       
+                       IsAvailable = true,
+
+
                    },
                    new Board
                    {
@@ -122,8 +128,9 @@ namespace SurfBoardsv2.Models
                        Price = 565,
                        Equipment = "",
                        ImageFileName = "",
-                       
-                       
+                       IsAvailable = true,
+
+
                    },
                    new Board
                    {
@@ -136,8 +143,9 @@ namespace SurfBoardsv2.Models
                        Price = 565,
                        Equipment = "",
                        ImageFileName = "",
-                       
-                       
+                       IsAvailable = true,
+
+
                    },
                    new Board
                    {
@@ -150,8 +158,9 @@ namespace SurfBoardsv2.Models
                        Price = 565,
                        Equipment = "",
                        ImageFileName = "",
-                       
-                       
+                       IsAvailable = true,
+
+
                    },
                    new Board
                    {
@@ -164,8 +173,9 @@ namespace SurfBoardsv2.Models
                        Price = 565,
                        Equipment = "",
                        ImageFileName = "",
-                       
-                       
+                       IsAvailable = true,
+
+
 
                    }
                     );

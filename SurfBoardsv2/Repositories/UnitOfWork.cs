@@ -1,4 +1,5 @@
 ﻿using SurfBoardsv2.Core.Repositories;
+using SurfBoardsv2.Models;
 
 namespace SurfBoardsv2.Repositories
 {
@@ -12,6 +13,11 @@ namespace SurfBoardsv2.Repositories
         {
             User = user;
             Role = role;
+        }
+
+        public Task IsInRoleAsync(SurfBoardsv2User currentUser, string v)
+        {
+            throw new NotImplementedException();
         }
     } 
 }

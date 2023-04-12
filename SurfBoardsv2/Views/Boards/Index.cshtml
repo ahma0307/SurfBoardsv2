@@ -19,9 +19,7 @@
 }
 <form asp-controller="boards" asp-action="Index" Method="get">
     <p>
-        
         Søgefelt: @Html.TextBox("SearchString")
-        
         <input type="submit" value="Filter" />
     </p>
 </form>
@@ -53,60 +51,43 @@
                 @Html.DisplayNameFor(model => model.Equipment)
             </th>
             <th>
-            @Html.DisplayNameFor(model => model.ImageFile)
+                @Html.DisplayNameFor(model => model.ImageFile)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsAvailable)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Length)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Width)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Thickness)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.volume)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.type)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Equipment)
-            </td>
-             <td>
-
-                    <img src="@Url.Content("~/Images/"+item.ImageFileName)"  style="height": 25%; width="25%"; object-fit  />
-                                         
-
-             </td>
-                
+        @foreach (var board in Model)
+        {
+            <tr>
+                <td>@board.Name</td>
+                <td>@board.Length</td>
+                <td>@board.Width</td>
+                <td>@board.Thickness</td>
+                <td>@board.volume</td>
+                <td>@board.type</td>
+                <td>@board.Price kr.</td>
+                <td>@board.Equipment</td>
                 <td>
+                    <img src="@Url.Content("~/Images/"+board.ImageFileName)" style="height:25%;width:25%;object-fit:cover;" />
+                </td>
+                <td>@(board.IsAvailable ? "Ledig" : "Ikke Ledig")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@board.Id">Details</a>
                     @if (User.Identity.IsAuthenticated && User.IsInRole("Administrator"))
                     {
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        <a asp-action="Edit" asp-route-id="@board.Id">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@board.Id">Delete</a>
                     }
-                    @if (SignInManager.IsSignedIn(User)){
-                        <a href="@Url.Action("Index", "Rent")">Rent</a>
+                    @if (SignInManager.IsSignedIn(User) && board.IsAvailable)
+                    {
+                        <a asp-action="Create" asp-controller="Rents" asp-route-id="@board.Id" class="btn btn-primary">Rent</a>
                     }
-                    
-                
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-               
-            </td>
-        </tr>
-}
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

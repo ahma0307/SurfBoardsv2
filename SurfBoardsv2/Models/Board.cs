@@ -32,10 +32,14 @@ namespace SurfBoardsv2.Models
         [DisplayName("Upload file")]
         [DataType(DataType.Upload)]
         public IFormFile? ImageFile { get; set; }
-        
+
         public string? ImageFileName { get; set; }
+
+        public bool IsAvailable { get; set; }
+
         
 
+    }       
 
-    }
+        
 }

@@ -12,7 +12,9 @@ namespace SurfBoardsv2.Data
         {
         }
         public DbSet<SurfBoardsv2.Models.Board> Board { get; set; }
+        public DbSet<SurfBoardsv2.Models.Rent>? Rent { get; set; }
 
       
     }
+
 }

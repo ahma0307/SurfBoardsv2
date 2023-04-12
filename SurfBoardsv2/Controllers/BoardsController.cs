@@ -10,6 +10,9 @@ using SurfBoardsv2.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using SurfBoardsv2.Core;
+using Microsoft.AspNetCore.Identity;
+using SurfBoardsv2.Core.Repositories;
+using SurfBoardsv2.Repositories;
 
 namespace SurfBoardsv2.Controllers
 {
@@ -17,15 +20,19 @@ namespace SurfBoardsv2.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly SignInManager<SurfBoardsv2User> _signinmanager;
+        
 
-       
-        public BoardsController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
+        public BoardsController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment, SignInManager<SurfBoardsv2User> signInManager)
         {
+            _signinmanager = signInManager;
+            
             _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Boards
+
         
         public async Task<IActionResult> Index(string searchString)
         {
@@ -141,29 +148,36 @@ namespace SurfBoardsv2.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = Constants.Policies.RequireAdmin)]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Length,Width,Thickness,volume,type,Price,Equipment, ImageFile, ImageFileName")] Board board)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Length,Width,Thickness,volume,type,Price,Equipment, ImageFile, ImageFileName, IsAvailable")] Board board)
         {
-            
-            
-
-                   
-                
-
-                
-            
             if (id != board.Id)
             {
                 return NotFound();
             }
-            Console.WriteLine("hej");
+
             if (ModelState.IsValid)
             {
                 try
                 {
+                    // Check if user is an administrator
+                    var currentUser = await _signinmanager.UserManager.GetUserAsync(User);
+                    var isAdmin = await _signinmanager.UserManager.IsInRoleAsync(currentUser, "Administrator");
+
+                    // Update the board's availability if user is an administrator
+                    if (isAdmin)
+                    {
+                        _context.Update(board);
+                    }
+                    else
+                    {
+                        // Retrieve the current availability of the board
+                        var currentBoard = await _context.Board.AsNoTracking().FirstOrDefaultAsync(b => b.Id == id);
+                        board.IsAvailable = currentBoard.IsAvailable; // Restore original value
+                    }
+
                     if (board.ImageFile != null && board.ImageFile.Length > 0)
                     {
                         // Get the file name and extension
-                        
                         var fileName = Path.GetFileName(board.ImageFile.FileName);
                         var fileExtension = Path.GetExtension(fileName);
 
@@ -172,7 +186,7 @@ namespace SurfBoardsv2.Controllers
 
                         // Combine the path with the unique file name
                         var filePath = Path.Combine("wwwroot/Images", uniqueFileName);
-                        Console.WriteLine(filePath);
+
                         // Save the file to the server
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
@@ -183,12 +197,8 @@ namespace SurfBoardsv2.Controllers
                         board.ImageFileName = uniqueFileName;
                     }
 
-
-                    
-                    _context.Update(board);
                     await _context.SaveChangesAsync();
-                    //return RedirectToAction(nameof(Index));
-
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -201,8 +211,8 @@ namespace SurfBoardsv2.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
+
             return View(board);
         }
 

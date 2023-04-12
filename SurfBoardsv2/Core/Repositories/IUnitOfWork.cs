@@ -1,4 +1,6 @@
-﻿namespace SurfBoardsv2.Core.Repositories
+﻿using SurfBoardsv2.Models;
+
+namespace SurfBoardsv2.Core.Repositories
 {
     public interface IUnitOfWork
     {
@@ -6,5 +8,6 @@
 
         IRoleRepository Role { get; }
 
+        Task IsInRoleAsync(SurfBoardsv2User currentUser, string v);
     }
 }

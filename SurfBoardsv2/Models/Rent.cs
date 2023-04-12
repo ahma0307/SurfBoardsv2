@@ -5,7 +5,7 @@ namespace SurfBoardsv2.Models
 {
     public class Rent
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [Required]
        
         public DateTime RentPickDate { get; set; }
@@ -18,10 +18,8 @@ namespace SurfBoardsv2.Models
 
 
 
-      
+
         
-       
-       
-        
+
     }
 }
