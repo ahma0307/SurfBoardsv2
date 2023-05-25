@@ -4,6 +4,7 @@
 @model SurfBoardsv2.Core.ViewModels.EditUserViewModel
 @{
 }
+@if (User.Identity.IsAuthenticated && User.IsInRole("Administrator")){
 <main>
     <div class="py-5 text-center">
         <h2>Edit User</h2>
@@ -67,3 +68,4 @@
         </div>
     </div>
 </main>
+}

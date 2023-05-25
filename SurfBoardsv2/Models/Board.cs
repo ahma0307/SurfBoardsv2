@@ -37,7 +37,7 @@ namespace SurfBoardsv2.Models
 
         public bool IsAvailable { get; set; }
 
-        
+        public string Rents { get; set;}
 
     }       
 

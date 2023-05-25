@@ -30,8 +30,9 @@ namespace SurfBoardsv2.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DOB = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    DOB = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -56,7 +57,7 @@ namespace SurfBoardsv2.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Length = table.Column<float>(type: "real", nullable: true),
                     Width = table.Column<float>(type: "real", nullable: false),
                     Thickness = table.Column<float>(type: "real", nullable: false),
@@ -64,11 +65,29 @@ namespace SurfBoardsv2.Migrations
                     type = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Equipment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ImageFileName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ImageFileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsAvailable = table.Column<bool>(type: "bit", nullable: false),
+                    Rents = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Board", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Rent",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RentPickDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RentDropDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SurfBoardModels = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Rent", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -237,6 +256,9 @@ namespace SurfBoardsv2.Migrations
 
             migrationBuilder.DropTable(
                 name: "Board");
+
+            migrationBuilder.DropTable(
+                name: "Rent");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

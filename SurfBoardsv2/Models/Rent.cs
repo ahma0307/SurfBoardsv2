@@ -1,5 +1,7 @@
 ﻿using Microsoft.Build.Framework;
 using SurfBoardsv2.Controllers;
+using System.ComponentModel.DataAnnotations;
+using RequiredAttribute = System.ComponentModel.DataAnnotations.RequiredAttribute;
 
 namespace SurfBoardsv2.Models
 {
@@ -16,7 +18,8 @@ namespace SurfBoardsv2.Models
         [Required]
         public int UserId { get; set; }
 
-
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
 
 
         

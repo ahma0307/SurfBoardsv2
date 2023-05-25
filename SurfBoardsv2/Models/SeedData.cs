@@ -35,6 +35,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "",
                        ImageFileName = "",
                        IsAvailable = true,
+                       
 
 
 
@@ -53,6 +54,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "",
                        ImageFileName = "",
                        IsAvailable = true,
+                       
 
 
                    },
@@ -69,6 +71,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "",
                        ImageFileName = "",
                        IsAvailable = true,
+                       
 
 
                    },
@@ -84,6 +87,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "",
                        ImageFileName = "",
                        IsAvailable = true,
+                       
 
 
                    },
@@ -99,6 +103,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "",
                        ImageFileName = "",
                        IsAvailable = true,
+                       
 
 
                    },
@@ -114,6 +119,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "",
                        ImageFileName = "",
                        IsAvailable = true,
+                       
 
 
                    },
@@ -129,6 +135,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "",
                        ImageFileName = "",
                        IsAvailable = true,
+                       
 
 
                    },
@@ -144,6 +151,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "",
                        ImageFileName = "",
                        IsAvailable = true,
+                       
 
 
                    },
@@ -159,6 +167,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "",
                        ImageFileName = "",
                        IsAvailable = true,
+                       
 
 
                    },
@@ -174,6 +183,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "",
                        ImageFileName = "",
                        IsAvailable = true,
+                       
 
 
 

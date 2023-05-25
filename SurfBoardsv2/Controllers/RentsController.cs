@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SurfBoardsv2.Core.ViewModels;
 using SurfBoardsv2.Data;
 using SurfBoardsv2.Models;
 
@@ -54,8 +55,9 @@ namespace SurfBoardsv2.Controllers
         public IActionResult Conformation()
         {
 
-
             return View();
+            
+            
         }
 
         // POST: Rents/Create
@@ -65,15 +67,21 @@ namespace SurfBoardsv2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,RentPickDate,RentDropDate,SurfBoardModels,UserId")] Rent rent)
         {
+            
             if (ModelState.IsValid)
             {
-                
+
+
                 rent.Id = Guid.NewGuid();
                 _context.Add(rent);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
+
+
             }
-            return View(rent);
+            
+            return View();
+
         }
 
         // GET: Rents/Edit/5

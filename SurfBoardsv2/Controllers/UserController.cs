@@ -1,20 +1,27 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using SurfBoardsv2.Core;
 using SurfBoardsv2.Core.Repositories;
 using SurfBoardsv2.Core.ViewModels;
+using SurfBoardsv2.Data;
 using SurfBoardsv2.Models;
 
 namespace SurfBoardsv2.Controllers
 {
     public class UserController : Controller
     {
+        private readonly ApplicationDbContext _context;
         private readonly SignInManager<SurfBoardsv2User> _signInManager;
         private readonly IUnitOfWork _unitOfWork;
         
+        
 
-        public UserController(IUnitOfWork unitOfWork, SignInManager<SurfBoardsv2User> signInManager)
+        public UserController(IUnitOfWork unitOfWork, SignInManager<SurfBoardsv2User> signInManager, ApplicationDbContext context)
         {
+            _context = context;
             _signInManager = signInManager;
             _unitOfWork = unitOfWork;
         }
@@ -93,6 +100,36 @@ namespace SurfBoardsv2.Controllers
 
 
             return RedirectToAction("Edit", new {id = user.Id});
+        }
+        [Authorize(Policy = Constants.Policies.RequireAdmin)]
+        public async Task<IActionResult> Delete(string id)
+        {
+
+            var user = _unitOfWork.User.GetUser(id);
+            
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_signInManager.UserManager.GetUserId(User)}'.");
+            }
+
+            
+            
+            if (user != null)
+            {
+                _context.Users.Remove(user);
+
+                
+            }
+
+            await _context.SaveChangesAsync();
+
+            
+
+            
+
+            
+
+            return Redirect("~/");
         }
     }
 }

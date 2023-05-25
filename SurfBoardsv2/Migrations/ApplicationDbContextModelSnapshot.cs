@@ -184,6 +184,10 @@ namespace SurfBoardsv2.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18, 2)");
 
+                    b.Property<string>("Rents")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<float>("Thickness")
                         .HasColumnType("real");
 
@@ -212,6 +216,12 @@ namespace SurfBoardsv2.Migrations
 
                     b.Property<DateTime>("RentPickDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<string>("SurfBoardModels")
                         .IsRequired()
