@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +12,11 @@ using SurfBoardsv2.Models;
 
 namespace SurfBoardsv2.Controllers
 {
-    public class RentsController : Controller
+    public class RentController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public RentsController(ApplicationDbContext context)
+        public RentController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -51,10 +53,8 @@ namespace SurfBoardsv2.Controllers
             return View();
         }
 
-        public IActionResult Conformation()
+        public IActionResult Confirmation()
         {
-
-
             return View();
         }
 
@@ -63,11 +63,30 @@ namespace SurfBoardsv2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RentPickDate,RentDropDate,SurfBoardModels,UserId")] Rent rent)
+        public async Task<IActionResult> Create([Bind("Id,RentPickDate,RentDropDate,SurfBoardModels")] Rent rent)
         {
             if (ModelState.IsValid)
             {
+                // Get the current user's id
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (userId == null)
+                {
+                    // If user id is not found, return unauthorized
+                    return Unauthorized();
+                }
+
+                // Fetch SurfBoardsv2User instance from the database
+                var surfBoardsv2User = await _context.Users.FindAsync(userId);
+
+                if (surfBoardsv2User == null)
+                {
+                    // If the user is not found, return not found
+                    return NotFound();
+                }
+
                 rent.Id = Guid.NewGuid();
+                rent.SetUserId(surfBoardsv2User);
                 _context.Add(rent);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -96,6 +115,7 @@ namespace SurfBoardsv2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,RentPickDate,RentDropDate,SurfBoardModels,UserId")] Rent rent)
         {
             if (id != rent.Id)

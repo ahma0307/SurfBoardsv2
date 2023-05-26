@@ -72,9 +72,16 @@ namespace SurfBoardsv2.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
+            [StringLength(255, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 1)]
             [DataType(DataType.Text)]
-            [Display(Name = "Full name")]
-            public string Name { get; set; }
+            [Display(Name = "First name")]
+            public string FirstName { get; set; }
+
+            [Required]
+            [StringLength(255, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 1)]
+            [DataType(DataType.Text)]
+            [Display(Name = "Last name")]
+            public string LastName { get; set; }
 
             [Required]
             [Display(Name = "Birth Date")]
@@ -124,7 +131,8 @@ namespace SurfBoardsv2.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
-                user.Name = Input.Name;
+                user.FirstName = Input.FirstName;
+                user.LastName = Input.LastName;
                 user.DOB = Input.DOB;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);

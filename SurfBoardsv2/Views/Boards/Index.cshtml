@@ -39,10 +39,10 @@
                 @Html.DisplayNameFor(model => model.Thickness)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.volume)
+                @Html.DisplayNameFor(model => model.Volume)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.type)
+                @Html.DisplayNameFor(model => model.Type)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Price)
@@ -67,8 +67,8 @@
                 <td>@board.Length</td>
                 <td>@board.Width</td>
                 <td>@board.Thickness</td>
-                <td>@board.volume</td>
-                <td>@board.type</td>
+                <td>@board.Volume</td>
+                <td>@board.Type</td>
                 <td>@board.Price kr.</td>
                 <td>@board.Equipment</td>
                 <td>
@@ -84,7 +84,7 @@
                     }
                     @if (SignInManager.IsSignedIn(User) && board.IsAvailable)
                     {
-                        <a asp-action="Create" asp-controller="Rents" asp-route-id="@board.Id" class="btn btn-primary">Rent</a>
+                        <a asp-action="Create" asp-controller="Rent" asp-route-id="@board.Id" class="btn btn-primary">Rent</a>
                     }
                 </td>
             </tr>

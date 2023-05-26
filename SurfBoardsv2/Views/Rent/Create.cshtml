@@ -1,5 +1,6 @@
 ﻿@model SurfBoardsv2.Models.Rent
 
+
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -15,15 +16,24 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="RentPickDate" class="control-label"></label>
-                <input asp-for="RentPickDate" class="form-control" />
+                <input asp-for="RentPickDate" class="form-control" type="date"/>
                 <span asp-validation-for="RentPickDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="RentDropDate" class="control-label"></label>
-                <input asp-for="RentDropDate" class="form-control" />
+                <input asp-for="RentDropDate" class="form-control" type="date"/>
                 <span asp-validation-for="RentDropDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
+                <label for="SurfBoardModels" class="control-label">Valgte</label>
+                <select asp-for="SurfBoardModels" asp-items="ViewBag.SurfBoardModels" class="form-control"></select>
+                <span asp-validation-for="SurfBoardModels" class="text-danger"></span>
+            </div>*@
+
+            <!-- Hidden field for the SurfBoardModels ID -->
+            @*<input type="hidden" asp-for="SurfBoardModels" />*@
+
+@*            <div class="form-group">
                 <label asp-for="SurfBoardModels" class="control-label"></label>
                 <input asp-for="SurfBoardModels" class="form-control" />
                 <span asp-validation-for="SurfBoardModels" class="text-danger"></span>
@@ -32,11 +42,11 @@
                 <label asp-for="UserId" class="control-label"></label>
                 <input asp-for="UserId" class="form-control" />
                 <span asp-validation-for="UserId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Conformation" asp-action="Conformation" asp-controller="Rents" class="btn btn-primary" />
+            </div>*@
+            
+            <button id="rent-surfboard-button" type="submit" asp-action="Confirmation" asp-controller="Rents" class="w-100 btn btn-lg btn-primary">Lej</button>
                 
-            </div>
+            
         </form>
     </div>
 </div>

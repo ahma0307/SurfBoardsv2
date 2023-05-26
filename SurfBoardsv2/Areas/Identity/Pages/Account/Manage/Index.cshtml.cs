@@ -54,9 +54,16 @@ namespace SurfBoardsv2.Areas.Identity.Pages.Account.Manage
         public class InputModel
         {
             [Required]
+            [StringLength(255, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 1)]
             [DataType(DataType.Text)]
-            [Display(Name = "Full name")]
-            public string Name { get; set; }
+            [Display(Name = "First name")]
+            public string FirstName { get; set; }
+
+            [Required]
+            [StringLength(255, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 1)]
+            [DataType(DataType.Text)]
+            [Display(Name = "Last name")]
+            public string LastName { get; set; }
 
             [Required]
             [Display(Name = "Birth Date")]
@@ -80,7 +87,9 @@ namespace SurfBoardsv2.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
-                Name = user.UserName,
+                //Name = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 DOB = user.DOB,
                 PhoneNumber = phoneNumber
             };
@@ -122,9 +131,14 @@ namespace SurfBoardsv2.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
             }
-            if (Input.Name != user.UserName)
+            if (Input.FirstName != user.FirstName)
             {
-                user.UserName = Input.Name;
+                user.FirstName = Input.FirstName;
+            }
+
+            if (Input.LastName != user.LastName) 
+            { 
+                user.LastName = Input.LastName; 
             }
 
             if (Input.DOB != user.DOB)
