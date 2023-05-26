@@ -12,7 +12,9 @@ namespace SurfBoardsv2.Models
         [ConcurrencyCheck]
         public DateTime RentDropDate { get; set; }
         [ConcurrencyCheck]
-        public string SurfBoardModels { get; set; }
+        public string SurfBoardModelId { get; set; }
+        [ConcurrencyCheck]
+        public string SurfBoardModelName { get; set; }
         [ConcurrencyCheck]
         public string UserId { get; set; }
       

@@ -18,11 +18,11 @@ namespace SurfBoardsv2.Models
                     DbContextOptions<ApplicationDbContext>>()))
             {
                 // Look for any movies.
-                if (context.Board.Any())
+                if (context.Boards.Any())
                 {
                     return;   // DB has been seeded
                 }
-                context.Board.AddRange(
+                context.Boards.AddRange(
                    new Board
                    {
                        Name = "The Minilog",

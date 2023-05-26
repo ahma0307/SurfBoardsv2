@@ -11,8 +11,8 @@ namespace SurfBoardsv2.Data
             : base(options)
         {
         }
-        public DbSet<SurfBoardsv2.Models.Board> Board { get; set; }
-        public DbSet<SurfBoardsv2.Models.Rent>? Rent { get; set; }
+        public DbSet<SurfBoardsv2.Models.Board> Boards { get; set; }
+        public DbSet<SurfBoardsv2.Models.Rent>? Rents { get; set; }
 
     }
 

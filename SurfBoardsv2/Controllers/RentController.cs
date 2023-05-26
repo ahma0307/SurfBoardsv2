@@ -24,20 +24,20 @@ namespace SurfBoardsv2.Controllers
         // GET: Rents
         public async Task<IActionResult> Index()
         {
-              return _context.Rent != null ? 
-                          View(await _context.Rent.ToListAsync()) :
+              return _context.Rents != null ? 
+                          View(await _context.Rents.ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.Rent'  is null.");
         }
 
         // GET: Rents/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null || _context.Rent == null)
+            if (id == null || _context.Rents == null)
             {
                 return NotFound();
             }
 
-            var rent = await _context.Rent
+            var rent = await _context.Rents
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (rent == null)
             {
@@ -48,10 +48,27 @@ namespace SurfBoardsv2.Controllers
         }
 
         // GET: Rents/Create
-        public IActionResult Create()
+        public IActionResult Create(Guid? boardId)
         {
+            if (boardId != null)
+            {
+                var selectedBoard = _context.Boards.FirstOrDefault(b => b.Id == boardId);
+                if (selectedBoard != null)
+                {
+                    // Save the selected board id in TempData to use it in the POST action
+                    TempData["SelectedBoardId"] = selectedBoard.Id.ToString();
+
+                    var rent = new Rent
+                    {
+                        SurfBoardModelId = selectedBoard.Id.ToString()
+                        // Other properties...
+                    };
+                    return View(rent);
+                }
+            }
             return View();
         }
+
 
         public IActionResult Confirmation()
         {
@@ -63,10 +80,16 @@ namespace SurfBoardsv2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RentPickDate,RentDropDate,SurfBoardModels")] Rent rent)
+        public async Task<IActionResult> Create([Bind("Id,RentPickDate,RentDropDate")] Rent rent)
         {
             if (ModelState.IsValid)
             {
+                if (TempData["SelectedBoardId"] != null)
+                {
+                    var boardId = Guid.Parse(TempData["SelectedBoardId"].ToString());
+                    rent.SurfBoardModelId = boardId.ToString();
+                }
+
                 // Get the current user's id
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -89,20 +112,23 @@ namespace SurfBoardsv2.Controllers
                 rent.SetUserId(surfBoardsv2User);
                 _context.Add(rent);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
+                return RedirectToAction("Confirmation", new { id = rent.Id });
             }
+
             return View(rent);
         }
+
 
         // GET: Rents/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null || _context.Rent == null)
+            if (id == null || _context.Rents == null)
             {
                 return NotFound();
             }
 
-            var rent = await _context.Rent.FindAsync(id);
+            var rent = await _context.Rents.FindAsync(id);
             if (rent == null)
             {
                 return NotFound();
@@ -149,12 +175,12 @@ namespace SurfBoardsv2.Controllers
         // GET: Rents/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null || _context.Rent == null)
+            if (id == null || _context.Rents == null)
             {
                 return NotFound();
             }
 
-            var rent = await _context.Rent
+            var rent = await _context.Rents
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (rent == null)
             {
@@ -169,23 +195,35 @@ namespace SurfBoardsv2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            if (_context.Rent == null)
+            if (_context.Rents == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Rent'  is null.");
             }
-            var rent = await _context.Rent.FindAsync(id);
+            var rent = await _context.Rents.FindAsync(id);
             if (rent != null)
             {
-                _context.Rent.Remove(rent);
+                _context.Rents.Remove(rent);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        public async Task<IActionResult> Confirmation(Guid id)
+        {
+            var rent = await _context.Rents.FindAsync(id);
+
+            if (rent == null)
+            {
+                return NotFound();
+            }
+
+            return View(rent);
+        }
+
 
         private bool RentExists(Guid id)
         {
-          return (_context.Rent?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Rents?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

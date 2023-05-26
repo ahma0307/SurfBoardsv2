@@ -84,7 +84,7 @@
                     }
                     @if (SignInManager.IsSignedIn(User) && board.IsAvailable)
                     {
-                        <a asp-action="Create" asp-controller="Rent" asp-route-id="@board.Id" class="btn btn-primary">Rent</a>
+                        <a asp-action="Create" asp-controller="Rent" asp-route-boardId="@board.Id" class="btn btn-primary">Rent</a>
                     }
                 </td>
             </tr>
