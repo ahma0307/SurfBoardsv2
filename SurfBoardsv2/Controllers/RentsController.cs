@@ -67,7 +67,6 @@ namespace SurfBoardsv2.Controllers
         {
             if (ModelState.IsValid)
             {
-                
                 rent.Id = Guid.NewGuid();
                 _context.Add(rent);
                 await _context.SaveChangesAsync();
