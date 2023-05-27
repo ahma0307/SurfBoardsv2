@@ -29,7 +29,7 @@ namespace SurfBoardsv2.Controllers
             _context = context;
             _signInManager = signInManager;
             _unitOfWork = unitOfWork;
-            _context = context;
+            
         }
         public IActionResult Index()
         {
@@ -138,27 +138,7 @@ namespace SurfBoardsv2.Controllers
 
             return Redirect("~/");
         }
-        [Authorize(Policy = Constants.Policies.RequireAdmin)]
-        public async Task<IActionResult> Delete(string id)
-        {
-
-            var user = _unitOfWork.User.GetUser(id);
             
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_signInManager.UserManager.GetUserId(User)}'.");
-            }
-
-            
-            
-            if (user != null)
-            {
-                _context.Users.Remove(user);
-
-                
-            }
-
-            await _context.SaveChangesAsync();
 
             
 
@@ -166,7 +146,7 @@ namespace SurfBoardsv2.Controllers
 
             
 
-            return Redirect("~/");
-        }
+           
+        
     }
 }
