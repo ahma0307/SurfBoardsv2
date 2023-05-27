@@ -30,8 +30,12 @@ namespace SurfBoardsv2.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+<<<<<<<< HEAD:SurfBoardsv2/Migrations/20230525124440_InitialCreate.cs
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+========
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+>>>>>>>> master:SurfBoardsv2/Migrations/20230525092334_InitialCreate.cs
                     DOB = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -68,7 +72,11 @@ namespace SurfBoardsv2.Migrations
                     Equipment = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ImageFileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsAvailable = table.Column<bool>(type: "bit", nullable: false),
+<<<<<<<< HEAD:SurfBoardsv2/Migrations/20230525124440_InitialCreate.cs
                     RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+========
+                    Rents = table.Column<string>(type: "nvarchar(max)", nullable: false)
+>>>>>>>> master:SurfBoardsv2/Migrations/20230525092334_InitialCreate.cs
                 },
                 constraints: table =>
                 {

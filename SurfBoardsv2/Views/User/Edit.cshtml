@@ -4,6 +4,7 @@
 @model SurfBoardsv2.Core.ViewModels.EditUserViewModel
 @{
 }
+
 <main>
     <div class="py-5 text-center">
         <h2>Edit User</h2>
@@ -18,9 +19,9 @@
                 
                 <div class="row g-3">
                     <div class="col-sm-6">
-                        <label asp-for="@Model.User.UserName" class="form-label"></label>
-                        <input asp-for="@Model.User.UserName" class="form-control" autocomplete="username" aria-required="true" />
-                        <span asp-validation-for="@Model.User.UserName" class="text-danger">
+                        <label asp-for="@Model.User.FirstName" class="form-label"></label>
+                        <input asp-for="@Model.User.FirstName" class="form-control" autocomplete="FirstName" aria-required="true" />
+                        <span asp-validation-for="@Model.User.FirstName" class="text-danger">
                         </span>
                     </div>
 
@@ -47,13 +48,13 @@
                 <h4 class="mb-3">Roles</h4>
 
                 <div class="my-3">
-
+                    <p>Hej</p>
                     @for (int i = 0; i < @Model.Roles.Count(); i++)
                     {
                         <div class="form-check">
                             @Html.CheckBoxFor(c => @Model.Roles[i].Selected)
                             @Html.HiddenFor(h => @Model.Roles[i].Value)
-
+                            <p>Hej</p>
                             @Html.LabelFor(l => @Model.Roles[i].Selected, @Model.Roles[i].Text, new {@class="form-check-label"})
                             @Html.HiddenFor(h => @Model.Roles[i].Text)
                         </div>
@@ -67,3 +68,4 @@
         </div>
     </div>
 </main>
+}

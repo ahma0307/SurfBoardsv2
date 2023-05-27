@@ -12,7 +12,11 @@ using SurfBoardsv2.Data;
 namespace SurfBoardsv2.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
+<<<<<<<< HEAD:SurfBoardsv2/Migrations/20230525124440_InitialCreate.Designer.cs
     [Migration("20230525124440_InitialCreate")]
+========
+    [Migration("20230525092334_InitialCreate")]
+>>>>>>>> master:SurfBoardsv2/Migrations/20230525092334_InitialCreate.Designer.cs
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -193,11 +197,17 @@ namespace SurfBoardsv2.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("decimal(18, 2)");
 
+<<<<<<<< HEAD:SurfBoardsv2/Migrations/20230525124440_InitialCreate.Designer.cs
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
+========
+                    b.Property<string>("Rents")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+>>>>>>>> master:SurfBoardsv2/Migrations/20230525092334_InitialCreate.Designer.cs
 
                     b.Property<float>("Thickness")
                         .IsConcurrencyToken()

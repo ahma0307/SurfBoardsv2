@@ -15,7 +15,20 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddAuthentication()
+    .AddFacebook(options =>
+    {
+        options.AppId = "168184782830103";
+        options.AppSecret = "893eaf058493e5c3bff89ef488d7e221";
+    })
+    .AddGoogle(options =>
+    {
+        options.ClientId = "582965217548-i6dlvsnk4nrvhvpmlde1huaa1d8a9hh6.apps.googleusercontent.com";
+        options.ClientSecret = "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";
+    });
+
 
 builder.Services.AddDefaultIdentity<SurfBoardsv2User>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()

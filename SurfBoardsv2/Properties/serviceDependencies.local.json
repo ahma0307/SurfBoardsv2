@@ -4,5 +4,4 @@
       "type": "mssql.local",
       "connectionId": "ConnectionStrings:DefaultConnection"
     }
-  }
 }

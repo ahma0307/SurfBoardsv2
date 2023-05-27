@@ -12,8 +12,13 @@ using SurfBoardsv2.Data;
 namespace SurfBoardsv2.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
+<<<<<<<< HEAD:SurfBoardsv2/Migrations/20230525143103_RentsUpdate.Designer.cs
     [Migration("20230525143103_RentsUpdate")]
     partial class RentsUpdate
+========
+    [Migration("20230526092112_RentProbe")]
+    partial class RentProbe
+>>>>>>>> master:SurfBoardsv2/Migrations/20230526092112_RentProbe.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -245,6 +250,7 @@ namespace SurfBoardsv2.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+<<<<<<<< HEAD:SurfBoardsv2/Migrations/20230525143103_RentsUpdate.Designer.cs
                     b.Property<string>("UserId")
                         .IsConcurrencyToken()
                         .IsRequired()
@@ -253,6 +259,19 @@ namespace SurfBoardsv2.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
+========
+                    b.Property<string>("SurfBoardsv2UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserId")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SurfBoardsv2UserId");
+>>>>>>>> master:SurfBoardsv2/Migrations/20230526092112_RentProbe.Designer.cs
 
                     b.ToTable("Rent");
                 });
@@ -384,6 +403,7 @@ namespace SurfBoardsv2.Migrations
 
             modelBuilder.Entity("SurfBoardsv2.Models.Rent", b =>
                 {
+<<<<<<<< HEAD:SurfBoardsv2/Migrations/20230525143103_RentsUpdate.Designer.cs
                     b.HasOne("SurfBoardsv2.Models.SurfBoardsv2User", "User")
                         .WithMany("Rents")
                         .HasForeignKey("UserId")
@@ -391,6 +411,11 @@ namespace SurfBoardsv2.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+========
+                    b.HasOne("SurfBoardsv2.Models.SurfBoardsv2User", null)
+                        .WithMany("Rents")
+                        .HasForeignKey("SurfBoardsv2UserId");
+>>>>>>>> master:SurfBoardsv2/Migrations/20230526092112_RentProbe.Designer.cs
                 });
 
             modelBuilder.Entity("SurfBoardsv2.Models.SurfBoardsv2User", b =>

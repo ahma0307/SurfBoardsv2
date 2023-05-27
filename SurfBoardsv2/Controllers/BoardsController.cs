@@ -13,6 +13,7 @@ using SurfBoardsv2.Core;
 using Microsoft.AspNetCore.Identity;
 using SurfBoardsv2.Core.Repositories;
 using SurfBoardsv2.Repositories;
+using SurfBoardsv2.Core.ViewModels;
 
 namespace SurfBoardsv2.Controllers
 {
@@ -34,9 +35,18 @@ namespace SurfBoardsv2.Controllers
         // GET: Boards
 
         
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(string currentFilter, string searchString, int? pageNumber)
         {
-            
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
             //The first line of the Index action method creates a LINQ query to select the boards:
             var board = from m in _context.Boards
                          select m;//The query is only defined at this point, it has not been run against the database
@@ -48,12 +58,14 @@ namespace SurfBoardsv2.Controllers
                 
                 //The s => s.Title!.Contains(searchString) code above is a Lambda Expression.
             }
-           
 
- 
-            return View(await board.ToListAsync());
-            
+
+
+            int pageSize = 3;
+            return View(await PaginatedList<Board>.CreateAsync(board.AsNoTracking(), pageNumber ?? 1, pageSize));
+
         }
+        
 
         // GET: Boards/Details/5
         public async Task<IActionResult> Details(Guid? id)
@@ -85,7 +97,7 @@ namespace SurfBoardsv2.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = Constants.Policies.RequireAdmin)]
-        public async Task<IActionResult> Create([Bind("Id,Name,Length,Width,Thickness,volume,type,Price,Equipment,ImageFile, ImageFileName")] Board board)
+        public async Task<IActionResult> Create([Bind("Id,Name,Length,Width,Thickness,volume,type,Price,Equipment, ImageFile, ImageFileName, IsAvailable, Rents")] Board board)
         {
 
             if (ModelState.IsValid)
@@ -148,7 +160,7 @@ namespace SurfBoardsv2.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = Constants.Policies.RequireAdmin)]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Length,Width,Thickness,volume,type,Price,Equipment, ImageFile, ImageFileName, IsAvailable")] Board board)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Length,Width,Thickness,volume,type,Price,Equipment, ImageFile, ImageFileName, IsAvailable, Rents")] Board board)
         {
             if (id != board.Id)
             {

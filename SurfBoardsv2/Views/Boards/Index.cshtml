@@ -1,4 +1,5 @@
-﻿@model IEnumerable<SurfBoardsv2.Models.Board>
+﻿@model PaginatedList<SurfBoardsv2.Models.Board>
+
 @using SurfBoardsv2.Models
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<SurfBoardsv2User> SignInManager
@@ -27,16 +28,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Length)
+                Length
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Width)
+                Width
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Thickness)
+               Thickness
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Volume)
@@ -45,16 +46,16 @@
                 @Html.DisplayNameFor(model => model.Type)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
+                Price
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Equipment)
+                Equipment
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ImageFile)
+                ImageFile
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IsAvailable)
+                IsAvailable
             </th>
             <th></th>
         </tr>
@@ -91,3 +92,22 @@
         }
     </tbody>
 </table>
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
