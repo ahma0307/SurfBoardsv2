@@ -4,4 +4,20 @@
     ViewData["Title"] = "Confirmation";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h1>Succes!</h1>
+
+@if (Model != null)
+{
+    <h1>Success!</h1>
+
+    <div class="row">
+        <div class="col-md-4">
+            <p>You have rented @Model.RentedBoard.Name</p>
+            <p>You will have to pick the board up on @Model.RentPickDate.ToShortDateString() and return it on @Model.RentDropDate.ToShortDateString()</p>
+            <p>May the waves be most bodacious</p>
+        </div>
+    </div>
+}
+else
+{
+    <h1>This page does nothing if you haven't rented a board</h1>
+}

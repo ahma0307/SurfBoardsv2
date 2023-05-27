@@ -18,8 +18,8 @@
             <div class="col-12">
 
                 <div class="form-group">
-                    <label asp-for="@Model.UserId" class="control-label"></label>
-                    <input asp-for="@Model.UserId" value="@ViewBag.UserId" class="form-control" />
+                    <label asp-for="@Model.BoardRenter.GetFullName()" class="control-label"></label>
+                    <input asp-for="@Model.BoardRenter.GetFullName()" value="@ViewBag.UserId" class="form-control" />
 
                 </div>
 
@@ -36,9 +36,9 @@
                     <span asp-validation-for="RentDropDate" class="datetime-local"></span>
                 </div>
                 <div class="form-group">
-                    <label asp-for="SurfBoardModelName" class="control-label"></label>
-                    <input asp-for="SurfBoardModelName" class="form-control" />
-                    <span asp-validation-for="SurfBoardModelName" class="text-danger"></span>
+                    <label asp-for="RentedBoard.Name" class="control-label"></label>
+                    <input asp-for="RentedBoard.Name" class="form-control" />
+                    <span asp-validation-for="RentedBoard.Name" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
@@ -80,7 +80,7 @@
                         <div class="mb-3 row">
                             <label class="col-3 col-form-label text-info">Full navn</label>
                             <div class="col-9">
-                                @Html.TextBoxFor(m => m.UserId, new {@class = "form-control", placeholder="text"})
+                                @Html.TextBoxFor(m => m.BoardRenter.GetFullName(), new {@class = "form-control", placeholder="text"})
                             </div>
                         </div>
 
@@ -100,7 +100,7 @@
                         <div class="mb-3 row">
                             <label class="col-3 col-form-label text-info">SurfboardModel</label>
                             <div class="col-9">
-                                @Html.TextBoxFor(m => m.SurfBoardModelName, new {@class = "form-control", placeholder="text"})
+                                @Html.TextBoxFor(m => m.RentedBoard.Name, new {@class = "form-control", placeholder="text"})
                             </div>
 
                         </div>

@@ -24,16 +24,16 @@
             @Html.DisplayFor(model => model.RentDropDate)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SurfBoardModelName)
+            @Html.DisplayNameFor(model => model.RentedBoard.Name)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SurfBoardModelName)
+            @Html.DisplayFor(model => model.RentedBoard.Name)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UserId)
+            @Html.DisplayNameFor(model => model.BoardRenter.GetFullName())
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UserId)
+            @Html.DisplayFor(model => model.BoardRenter.GetFullName())
         </dd>
     </dl>
 </div>

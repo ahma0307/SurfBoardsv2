@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,10 +16,12 @@ namespace SurfBoardsv2.Controllers
     public class RentController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<RentController> _logger;
 
-        public RentController(ApplicationDbContext context)
+        public RentController(ApplicationDbContext context, ILogger<RentController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: Rents
@@ -48,76 +51,98 @@ namespace SurfBoardsv2.Controllers
         }
 
         // GET: Rents/Create
-        public IActionResult Create(Guid? boardId)
+        public async Task<IActionResult> Create(Guid boardId, string userId)
         {
-            if (boardId != null)
+            _logger.LogInformation("Create (GET) called with boardId {boardId} and userId {userId}.", boardId, userId);
+
+            var board = await _context.Boards.FindAsync(boardId);
+            var user = await _context.Users.FindAsync(userId);
+
+            var currentDate = DateTime.Now.Date;
+
+            if (currentDate.DayOfWeek == DayOfWeek.Saturday)
             {
-                var selectedBoard = _context.Boards.FirstOrDefault(b => b.Id == boardId);
-                if (selectedBoard != null)
-                {
-                    // Save the selected board id in TempData to use it in the POST action
-                    TempData["SelectedBoardId"] = selectedBoard.Id.ToString();
-
-                    var rent = new Rent
-                    {
-                        SurfBoardModelId = selectedBoard.Id.ToString()
-                        // Other properties...
-                    };
-                    return View(rent);
-                }
+                currentDate = currentDate.AddDays(2);
             }
-            return View();
+            else if (currentDate.DayOfWeek == DayOfWeek.Sunday)
+            {
+                currentDate = currentDate.AddDays(1);
+            }
+
+            var initialRentPickDate = currentDate;
+
+            var nextWeekday = currentDate.AddDays(1);
+
+            while (nextWeekday.DayOfWeek == DayOfWeek.Saturday || nextWeekday.DayOfWeek == DayOfWeek.Sunday)
+            {
+                nextWeekday = nextWeekday.AddDays(1);
+            }
+
+            var initialRentDropDate = nextWeekday;
+
+            var rent = new Rent
+            {
+                RentPickDate = initialRentPickDate,
+                RentDropDate = initialRentDropDate,
+                RentedBoard = board,
+                BoardRenter = user,
+                RentedBoardId = board.Id,
+                BoardRenterId = user.Id
+            };
+
+            //if (user != null)
+            //{
+            //    rent.BoardRenter = user;
+            //}
+            return View(rent);
         }
 
 
-        public IActionResult Confirmation()
+        public async Task<IActionResult> Confirmation(Guid rentId)
         {
-            return View();
+            var rent = await _context.Rents.FindAsync(rentId);
+            return View(rent);
         }
+
 
         // POST: Rents/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RentPickDate,RentDropDate")] Rent rent)
+        public async Task<IActionResult> Create([Bind("Id,RentPickDate,RentDropDate,RentedBoardId,BoardRenterId")] Rent rent)
         {
+            _logger.LogInformation("Create (POST) called.");
+
             if (ModelState.IsValid)
             {
-                if (TempData["SelectedBoardId"] != null)
+                var board = await _context.Boards.FindAsync(rent.RentedBoardId);
+                var user = await _context.Users.FindAsync(rent.BoardRenterId);
+
+                if (board == null || user == null)
                 {
-                    var boardId = Guid.Parse(TempData["SelectedBoardId"].ToString());
-                    rent.SurfBoardModelId = boardId.ToString();
-                }
-
-                // Get the current user's id
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                if (userId == null)
-                {
-                    // If user id is not found, return unauthorized
-                    return Unauthorized();
-                }
-
-                // Fetch SurfBoardsv2User instance from the database
-                var surfBoardsv2User = await _context.Users.FindAsync(userId);
-
-                if (surfBoardsv2User == null)
-                {
-                    // If the user is not found, return not found
+                    _logger.LogWarning("Create (POST): Board or User not found.");
                     return NotFound();
                 }
 
-                rent.Id = Guid.NewGuid();
-                rent.SetUserId(surfBoardsv2User);
-                _context.Add(rent);
+                rent.RentedBoard = board;
+                rent.BoardRenter = user;
+
+                _context.Rents.Add(rent);
                 await _context.SaveChangesAsync();
-                //return RedirectToAction(nameof(Index));
-                return RedirectToAction("Confirmation", new { id = rent.Id });
+
+                _logger.LogInformation("Rent successfully created.");
+                return RedirectToAction("Confirmation");
             }
 
+            _logger.LogWarning("Create (POST): Model State is not valid.");
             return View(rent);
         }
+
+
+
+
 
 
         // GET: Rents/Edit/5
@@ -208,18 +233,6 @@ namespace SurfBoardsv2.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        public async Task<IActionResult> Confirmation(Guid id)
-        {
-            var rent = await _context.Rents.FindAsync(id);
-
-            if (rent == null)
-            {
-                return NotFound();
-            }
-
-            return View(rent);
-        }
-
 
         private bool RentExists(Guid id)
         {

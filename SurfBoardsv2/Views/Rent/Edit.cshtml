@@ -25,14 +25,14 @@
                 <span asp-validation-for="RentDropDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="SurfBoardModelName" class="control-label"></label>
-                <input asp-for="SurfBoardModelName" class="form-control" />
-                <span asp-validation-for="SurfBoardModelName" class="text-danger"></span>
+                <label asp-for="RentedBoard.Name" class="control-label"></label>
+                <input asp-for="RentedBoard.Name" class="form-control" />
+                <span asp-validation-for="RentedBoard.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-control" />
-                <span asp-validation-for="UserId" class="text-danger"></span>
+                <label asp-for="BoardRenter" class="control-label"></label>
+                <input asp-for="BoardRenter" class="form-control" />
+                <span asp-validation-for="BoardRenter" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

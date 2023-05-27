@@ -36,7 +36,7 @@ namespace SurfBoardsv2.Models
         public string? ImageFileName { get; set; }
         [ConcurrencyCheck]
         public bool IsAvailable { get; set; }
-
+        public ICollection<Rent> Rents { get; set; }
 
         [Timestamp]
         public byte[] RowVersion { get; set; }

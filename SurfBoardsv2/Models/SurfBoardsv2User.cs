@@ -19,11 +19,11 @@ public class SurfBoardsv2User : IdentityUser
     [PersonalData]
     public DateTime DOB { get; set; }
 
-    public List<Rent> Rents { get; set; }
+    public ICollection<Rent> Rents { get; set; }
 
-    public string? GetFullName(string firstName, string lastName)
+    public string? GetFullName()
     {
-        return firstName + " " + lastName;
+        return this.FirstName + " " + this.LastName;
     }
 }
 public class SurfBoardsv2Role : IdentityRole
