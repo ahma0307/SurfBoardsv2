@@ -227,10 +227,17 @@ namespace SurfBoardsv2.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("SurfBoardsv2UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserId")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SurfBoardsv2UserId");
 
                     b.ToTable("Rent");
                 });
@@ -355,6 +362,18 @@ namespace SurfBoardsv2.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("SurfBoardsv2.Models.Rent", b =>
+                {
+                    b.HasOne("SurfBoardsv2.Models.SurfBoardsv2User", null)
+                        .WithMany("Rents")
+                        .HasForeignKey("SurfBoardsv2UserId");
+                });
+
+            modelBuilder.Entity("SurfBoardsv2.Models.SurfBoardsv2User", b =>
+                {
+                    b.Navigation("Rents");
                 });
 #pragma warning restore 612, 618
         }

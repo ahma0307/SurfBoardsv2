@@ -35,9 +35,18 @@ namespace SurfBoardsv2.Controllers
         // GET: Boards
 
         
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(string currentFilter, string searchString, int? pageNumber)
         {
-            
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
             //The first line of the Index action method creates a LINQ query to select the boards:
             var board = from m in _context.Board
                          select m;//The query is only defined at this point, it has not been run against the database
@@ -49,11 +58,12 @@ namespace SurfBoardsv2.Controllers
                 
                 //The s => s.Title!.Contains(searchString) code above is a Lambda Expression.
             }
-           
 
- 
-            return View(await board.ToListAsync());
-            
+
+
+            int pageSize = 3;
+            return View(await PaginatedList<Board>.CreateAsync(board.AsNoTracking(), pageNumber ?? 1, pageSize));
+
         }
         
 

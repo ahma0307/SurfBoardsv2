@@ -8,6 +8,11 @@ using SurfBoardsv2.Core.Repositories;
 using SurfBoardsv2.Core.ViewModels;
 using SurfBoardsv2.Data;
 using SurfBoardsv2.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using SurfBoardsv2.Core;
+using SurfBoardsv2.Data;
 
 namespace SurfBoardsv2.Controllers
 {
@@ -24,6 +29,7 @@ namespace SurfBoardsv2.Controllers
             _context = context;
             _signInManager = signInManager;
             _unitOfWork = unitOfWork;
+            _context = context;
         }
         public IActionResult Index()
         {
@@ -100,6 +106,37 @@ namespace SurfBoardsv2.Controllers
 
 
             return RedirectToAction("Edit", new {id = user.Id});
+
+        }
+        [Authorize(Policy = Constants.Policies.RequireAdmin)]
+        public async Task<IActionResult> Delete(string id)
+        {
+
+            var user = _unitOfWork.User.GetUser(id);
+
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_signInManager.UserManager.GetUserId(User)}'.");
+            }
+
+
+
+            if (user != null)
+            {
+                _context.Users.Remove(user);
+
+
+            }
+
+            await _context.SaveChangesAsync();
+
+
+
+
+
+
+
+            return Redirect("~/");
         }
         [Authorize(Policy = Constants.Policies.RequireAdmin)]
         public async Task<IActionResult> Delete(string id)
