@@ -10,26 +10,24 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SurfBoardsv2.Data;
 using SurfBoardsv2.Models;
-
 namespace SurfBoardsv2.Controllers
 {
     public class RentController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly ILogger<RentController> _logger;
 
-        public RentController(ApplicationDbContext context, ILogger<RentController> logger)
+        public RentController(ApplicationDbContext context)
         {
             _context = context;
-            _logger = logger;
         }
 
         // GET: Rents
         public async Task<IActionResult> Index()
         {
-              return _context.Rents != null ? 
-                          View(await _context.Rents.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Rent'  is null.");
+            return _context.Rents != null ?
+                        View(await _context.Rents.ToListAsync()) :
+                        Problem("Entity set 'ApplicationDbContext.Rent'  is null.");
+
         }
 
         // GET: Rents/Details/5
@@ -51,9 +49,9 @@ namespace SurfBoardsv2.Controllers
         }
 
         // GET: Rents/Create
+        [Authorize]
         public async Task<IActionResult> Create(Guid boardId, string userId)
         {
-            _logger.LogInformation("Create (GET) called with boardId {boardId} and userId {userId}.", boardId, userId);
 
             var board = await _context.Boards.FindAsync(boardId);
             var user = await _context.Users.FindAsync(userId);
@@ -84,24 +82,27 @@ namespace SurfBoardsv2.Controllers
             {
                 RentPickDate = initialRentPickDate,
                 RentDropDate = initialRentDropDate,
-                RentedBoard = board,
-                BoardRenter = user,
                 RentedBoardId = board.Id,
-                BoardRenterId = user.Id
+                BoardRenterId = Guid.Parse(user.Id),
+                //RentedBoard = board,
+                //BoardRenter = user
             };
 
-            //if (user != null)
-            //{
-            //    rent.BoardRenter = user;
-            //}
-            return View(rent);
+
+            var model = new Tuple<Rent, Board, SurfBoardsv2User>(rent, board, user);
+
+            return View(model);
         }
 
 
-        public async Task<IActionResult> Confirmation(Guid rentId)
+        public async Task<IActionResult> Confirmation(Rent rent)
         {
-            var rent = await _context.Rents.FindAsync(rentId);
-            return View(rent);
+            var board = await _context.Boards.FindAsync(rent.RentedBoardId);
+            var user = await _context.Users.FindAsync(rent.BoardRenterId.ToString());
+
+            var model = new Tuple<Rent, Board, SurfBoardsv2User>(rent, board, user);
+
+            return View(model);
         }
 
 
@@ -111,34 +112,27 @@ namespace SurfBoardsv2.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RentPickDate,RentDropDate,RentedBoardId,BoardRenterId")] Rent rent)
+        public async Task<IActionResult> Create([Bind("RentPickDate,RentDropDate,RentedBoardId,BoardRenterId")] Rent rent)
         {
-            _logger.LogInformation("Create (POST) called.");
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var board = await _context.Boards.FindAsync(rent.RentedBoardId);
-                var user = await _context.Users.FindAsync(rent.BoardRenterId);
-
-                if (board == null || user == null)
+                var errors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var error in errors)
                 {
-                    _logger.LogWarning("Create (POST): Board or User not found.");
-                    return NotFound();
+                    System.Diagnostics.Debug.WriteLine(error.ErrorMessage);
                 }
-
-                rent.RentedBoard = board;
-                rent.BoardRenter = user;
-
-                _context.Rents.Add(rent);
-                await _context.SaveChangesAsync();
-
-                _logger.LogInformation("Rent successfully created.");
-                return RedirectToAction("Confirmation");
+                return View(rent);
             }
 
-            _logger.LogWarning("Create (POST): Model State is not valid.");
-            return View(rent);
+            rent.TimeOfOrder = DateTime.Now;
+            rent.Id = Guid.NewGuid();
+
+            _context.Add(rent);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Confirmation", rent);
         }
+
 
 
 

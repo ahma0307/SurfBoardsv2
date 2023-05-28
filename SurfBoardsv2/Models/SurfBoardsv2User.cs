@@ -19,7 +19,7 @@ public class SurfBoardsv2User : IdentityUser
     [PersonalData]
     public DateTime DOB { get; set; }
 
-    public ICollection<Rent> Rents { get; set; }
+    public ICollection<Rent>? Rents { get; set; }
 
     public string? GetFullName()
     {

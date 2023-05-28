@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using SurfBoardsv2.Core.Repositories;
 using SurfBoardsv2.Repositories;
 using SurfBoardsv2.Core.ViewModels;
+using SurfBoardsv2.Models;
 
 namespace SurfBoardsv2.Controllers
 {
@@ -27,7 +28,6 @@ namespace SurfBoardsv2.Controllers
         public BoardsController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment, SignInManager<SurfBoardsv2User> signInManager)
         {
             _signinmanager = signInManager;
-            
             _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
@@ -37,6 +37,17 @@ namespace SurfBoardsv2.Controllers
         
         public async Task<IActionResult> Index(string currentFilter, string searchString, int? pageNumber)
         {
+            
+            foreach (Rent rent in _context.Rents)
+            {
+                if (rent.RentPickDate <= DateTime.Today.Date && rent.RentDropDate >= DateTime.Today.Date)
+                {
+                    var unAvailableBoard = await _context.Boards.FindAsync(rent.RentedBoardId);
+                    unAvailableBoard.IsAvailable = false;
+                    await _context.SaveChangesAsync();
+                }
+            }
+
             if (searchString != null)
             {
                 pageNumber = 1;
@@ -61,7 +72,7 @@ namespace SurfBoardsv2.Controllers
 
 
 
-            int pageSize = 3;
+            int pageSize = 10;
             return View(await PaginatedList<Board>.CreateAsync(board.AsNoTracking(), pageNumber ?? 1, pageSize));
 
         }

@@ -19,12 +19,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.RentDropDate)
             </th>
-            <th>
+@*            <th>
                 @Html.DisplayNameFor(model => model.RentedBoard.Name)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.BoardRenter.GetFullName())
-            </th>
+            </th>*@
 
             
             <th></th>
@@ -39,12 +39,12 @@
             <td>
                 @Html.DisplayFor(modelItem => item.RentDropDate)
             </td>
-            <td>
+@*            <td>
                 @Html.DisplayFor(modelItem => item.RentedBoard.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.BoardRenter.GetFullName())
-            </td>
+            </td>*@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

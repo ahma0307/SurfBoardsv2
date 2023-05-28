@@ -8,6 +8,9 @@ namespace SurfBoardsv2.Models
     public class Rent
     {
         public Guid Id { get; set; }
+
+        [ConcurrencyCheck]
+        public DateTime TimeOfOrder { get; set; }
         [ConcurrencyCheck]
         public DateTime RentPickDate { get; set; }
         [ConcurrencyCheck]
@@ -15,14 +18,13 @@ namespace SurfBoardsv2.Models
 
         // Foreign keys
         public Guid RentedBoardId { get; set; }
-        public string BoardRenterId { get; set; }
+        public Guid BoardRenterId { get; set; }
 
-        [ConcurrencyCheck]
-        public Board RentedBoard { get; set; }
-        [ConcurrencyCheck]
-        public SurfBoardsv2User BoardRenter { get; set; }
+        
+        //public Board RentedBoard { get; set; }
+        //public SurfBoardsv2User BoardRenter { get; set; }
 
-        [Timestamp]
-        public byte[] RowVersion { get; set; }
+        //[Timestamp]
+        //public byte[] RowVersion { get; set; }
     }
 }

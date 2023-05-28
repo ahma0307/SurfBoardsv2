@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SurfBoardsv2.Data;
 
@@ -11,9 +12,11 @@ using SurfBoardsv2.Data;
 namespace SurfBoardsv2.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230528151740_ConcurrencyUpdate")]
+    partial class ConcurrencyUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -214,11 +217,9 @@ namespace SurfBoardsv2.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("BoardId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("BoardRenterId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("BoardRenterId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("RentDropDate")
                         .IsConcurrencyToken()
@@ -231,18 +232,17 @@ namespace SurfBoardsv2.Migrations
                     b.Property<Guid>("RentedBoardId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("SurfBoardsv2UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("TimeOfOrder")
+                    b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
-                        .HasColumnType("datetime2");
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BoardId");
+                    b.HasIndex("BoardRenterId");
 
-                    b.HasIndex("SurfBoardsv2UserId");
+                    b.HasIndex("RentedBoardId");
 
                     b.ToTable("Rents");
                 });
@@ -374,13 +374,21 @@ namespace SurfBoardsv2.Migrations
 
             modelBuilder.Entity("SurfBoardsv2.Models.Rent", b =>
                 {
-                    b.HasOne("SurfBoardsv2.Models.Board", null)
+                    b.HasOne("SurfBoardsv2.Models.SurfBoardsv2User", "BoardRenter")
                         .WithMany("Rents")
-                        .HasForeignKey("BoardId");
+                        .HasForeignKey("BoardRenterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("SurfBoardsv2.Models.SurfBoardsv2User", null)
+                    b.HasOne("SurfBoardsv2.Models.Board", "RentedBoard")
                         .WithMany("Rents")
-                        .HasForeignKey("SurfBoardsv2UserId");
+                        .HasForeignKey("RentedBoardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BoardRenter");
+
+                    b.Navigation("RentedBoard");
                 });
 
             modelBuilder.Entity("SurfBoardsv2.Models.Board", b =>

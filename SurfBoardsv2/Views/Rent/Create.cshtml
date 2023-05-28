@@ -1,4 +1,4 @@
-﻿@model SurfBoardsv2.Models.Rent
+﻿@model Tuple<SurfBoardsv2.Models.Rent, SurfBoardsv2.Models.Board, SurfBoardsv2.Models.SurfBoardsv2User>
 @using SurfBoardsv2.Models
 @using Microsoft.AspNetCore.Identity
 @inject UserManager<SurfBoardsv2User> UserManager
@@ -14,30 +14,31 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        @*Item1 = Rent and Item2 = Board*@
-        @if (Model != null && Model.RentedBoard != null)
+        @*Item1 = Rent, Item2 = Board and Item3 = SurfBoardsv2User*@
+        @if (Model.Item1 != null && Model.Item2 != null)
         {
-            <p>Selected board: @Model.RentedBoard.Name</p>
-            <p>User: @Model.BoardRenter.GetFullName()</p>
-            <form asp-action="Create">
+            <p>Selected board: @Model.Item2.Name</p>
+            <p>User: @Model.Item3.GetFullName()</p>
+            <form asp-action="Create" asp-controller="Rent" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
-                    <label asp-for="RentPickDate" class="control-label"></label>
-                    <input asp-for="RentPickDate" class="form-control" type="date" min="@DateTime.Now"
+                    <input id="rent-pick-date" name="RentPickDate" class="form-control" type="date" min="@DateTime.Now"
                            onfocus="this.setAttribute('min', this.value)"
                            oninput="validateRentPickDate(this)" />
-                    <span asp-validation-for="RentPickDate" class="text-danger"></span>
+                    <span asp-validation-for="Item1.RentPickDate" class="text-danger"></span>
+
                 </div>
                 <div class="form-group">
-                    <label asp-for="RentDropDate" class="control-label"></label>
-                    <input asp-for="RentDropDate" class="form-control" type="date" min="@DateTime.Now.AddDays(1)"
+                    <input id="rent-drop-date" name="RentDropDate" class="form-control" type="date" min="@DateTime.Now.AddDays(1)"
                            onfocus="this.setAttribute('min', this.value)"
                            oninput="validateRentDropDate(this)" />
-                    <span asp-validation-for="RentDropDate" class="text-danger"></span>
-                </div>
+                    <span asp-validation-for="Item1.RentDropDate" class="text-danger"></span>
 
-                <a asp-action="Confirmation" asp-controller="Rent" class="btn btn-primary">Rent</a>
-                @*<button id="rent-surfboard-button" type="submit" formaction="@Url.Action("Create", "Rent")" class="w-100 btn btn-lg btn-primary">Rent</button>*@
+                </div>
+                <input type="hidden" name="RentedBoardId" value="@Model.Item2.Id" />
+                <input type="hidden" name="BoardRenterId" value="@Model.Item3.Id" />
+              
+                <button id="rent-surfboard-button" type="submit" class="w-100 btn btn-lg btn-primary">Rent</button>
 
                 <script>
                     const rentSurfboardBtn = document.getElementById('rent-surfboard-button');
@@ -45,6 +46,7 @@
                     rentSurfboardBtn.addEventListener('click', function () {
                         return confirm('Are you sure you want to rent this board?');
                     });
+
                 </script>
 
             </form>

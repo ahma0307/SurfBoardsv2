@@ -21,6 +21,7 @@ namespace SurfBoardsv2.Models
                 {
                     return;   // DB has been seeded
                 }
+                
                 context.Boards.AddRange(
                    new Board
                    {

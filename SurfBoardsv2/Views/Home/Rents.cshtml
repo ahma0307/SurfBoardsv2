@@ -1,7 +1,7 @@
 ﻿@model SurfBoardsv2.Models.Board
 
 @{
-    ViewData["Title"] = "Rentsww";
+    ViewData["Title"] = "Rents";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -37,16 +37,16 @@
             @Html.DisplayFor(model => model.Thickness)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.volume)
+            @Html.DisplayNameFor(model => model.Volume)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.volume)
+            @Html.DisplayFor(model => model.Volume)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.type)
+            @Html.DisplayNameFor(model => model.Type)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.type)
+            @Html.DisplayFor(model => model.Type)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Price)
@@ -60,11 +60,8 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Equipment)
         </dd>
-        
-        
-       
     </dl>
-  
+</div>
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

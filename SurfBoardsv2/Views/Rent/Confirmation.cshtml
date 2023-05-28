@@ -1,4 +1,4 @@
-﻿@model SurfBoardsv2.Models.Rent
+﻿@model Tuple<SurfBoardsv2.Models.Rent, SurfBoardsv2.Models.Board, SurfBoardsv2.Models.SurfBoardsv2User>
 
 @{
     ViewData["Title"] = "Confirmation";
@@ -11,8 +11,8 @@
 
     <div class="row">
         <div class="col-md-4">
-            <p>You have rented @Model.RentedBoard.Name</p>
-            <p>You will have to pick the board up on @Model.RentPickDate.ToShortDateString() and return it on @Model.RentDropDate.ToShortDateString()</p>
+            <p>You (@Model.Item3.GetFullName()) have rented @Model.Item2.Name</p>
+            <p>You will have to pick the board up on @Model.Item1.RentPickDate.ToShortDateString() and return it on @Model.Item1.RentDropDate.ToShortDateString()</p>
             <p>May the waves be most bodacious</p>
         </div>
     </div>

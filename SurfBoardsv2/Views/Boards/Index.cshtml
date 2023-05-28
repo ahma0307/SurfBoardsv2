@@ -1,5 +1,4 @@
-﻿@model PaginatedList<SurfBoardsv2.Models.Board>
-
+﻿@model IEnumerable<SurfBoardsv2.Models.Board>
 @using SurfBoardsv2.Models
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<SurfBoardsv2User> SignInManager
@@ -28,16 +27,16 @@
     <thead>
         <tr>
             <th>
-                Name
+                @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                Length
+                @Html.DisplayNameFor(model => model.Length)
             </th>
             <th>
-                Width
+                @Html.DisplayNameFor(model => model.Width)
             </th>
             <th>
-               Thickness
+                @Html.DisplayNameFor(model => model.Thickness)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Volume)
@@ -46,16 +45,16 @@
                 @Html.DisplayNameFor(model => model.Type)
             </th>
             <th>
-                Price
+                @Html.DisplayNameFor(model => model.Price)
             </th>
             <th>
-                Equipment
+                @Html.DisplayNameFor(model => model.Equipment)
             </th>
             <th>
-                ImageFile
+                @Html.DisplayNameFor(model => model.ImageFile)
             </th>
             <th>
-                IsAvailable
+                @Html.DisplayNameFor(model => model.IsAvailable)
             </th>
             <th></th>
         </tr>
@@ -75,7 +74,7 @@
                 <td>
                     <img src="@Url.Content("~/Images/"+board.ImageFileName)" style="height:25%;width:25%;object-fit:cover;" />
                 </td>
-                <td>@(board.IsAvailable ? "Available" : "Not available")</td>
+                <td>@(board.IsAvailable ? "Ledig" : "Ikke Ledig")</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@board.Id">Details</a>
                     @if (User.Identity.IsAuthenticated && User.IsInRole("Administrator"))
@@ -92,22 +91,3 @@
         }
     </tbody>
 </table>
-@{
-    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
-    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
-}
-
-<a asp-action="Index"
-   asp-route-sortOrder="@ViewData["CurrentSort"]"
-   asp-route-pageNumber="@(Model.PageIndex - 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   class="btn btn-default @prevDisabled">
-    Previous
-</a>
-<a asp-action="Index"
-   asp-route-sortOrder="@ViewData["CurrentSort"]"
-   asp-route-pageNumber="@(Model.PageIndex + 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   class="btn btn-default @nextDisabled">
-    Next
-</a>
