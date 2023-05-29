@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Identity;
 using SurfBoardsv2.Core.Repositories;
 using SurfBoardsv2.Repositories;
 using SurfBoardsv2.Core.ViewModels;
-using SurfBoardsv2.Models;
 
 namespace SurfBoardsv2.Controllers
 {
@@ -37,17 +36,33 @@ namespace SurfBoardsv2.Controllers
         
         public async Task<IActionResult> Index(string currentFilter, string searchString, int? pageNumber)
         {
-            
-            foreach (Rent rent in _context.Rents)
+            //Making boards unavailable if they appear in a rent in the time period
+            if (await _context.Rents.AnyAsync())
             {
-                if (rent.RentPickDate <= DateTime.Today.Date && rent.RentDropDate >= DateTime.Today.Date)
+                foreach (Rent rent in _context.Rents)
                 {
-                    var unAvailableBoard = await _context.Boards.FindAsync(rent.RentedBoardId);
-                    unAvailableBoard.IsAvailable = false;
+                    if (rent.RentPickDate <= DateTime.Today.AddDays(1) && rent.RentDropDate >= DateTime.Today.Date)
+                    {
+                        var unAvailableBoard = await _context.Boards.FindAsync(rent.RentedBoardId);
+                        unAvailableBoard.IsAvailable = false;
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        var unAvailableBoard = await _context.Boards.FindAsync(rent.RentedBoardId);
+                        unAvailableBoard.IsAvailable = true;
+                        await _context.SaveChangesAsync();
+                    }
+                }
+            }
+            else
+            {
+                foreach (Board availableBoard in _context.Boards)
+                {
+                    availableBoard.IsAvailable = true;
                     await _context.SaveChangesAsync();
                 }
             }
-
             if (searchString != null)
             {
                 pageNumber = 1;
