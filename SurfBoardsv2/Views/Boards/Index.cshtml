@@ -11,11 +11,14 @@
 }
 
 <h1>Boards</h1>
-@if (User.Identity.IsAuthenticated && User.IsInRole("Administrator"))
+@if (User.Identity.IsAuthenticated)
 {
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
+    @if (User.IsInRole("Administrator") || User.IsInRole("Manager"))
+    {
+        <p>
+            <a asp-action="Create">Add New Board</a>
+        </p>
+    }
 }
 <form asp-controller="boards" asp-action="Index" Method="get">
     <p>
@@ -51,7 +54,7 @@
                 @Html.DisplayNameFor(model => model.Equipment)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ImageFile)
+                @Html.DisplayNameFor(model => model.MainImageId)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.IsAvailable)
@@ -60,6 +63,7 @@
         </tr>
     </thead>
     <tbody>
+
         @foreach (var board in Model)
         {
             <tr>
@@ -72,15 +76,18 @@
                 <td>@board.Price €</td>
                 <td>@board.Equipment</td>
                 <td>
-                    <img src="@Url.Content("~/Images/"+board.ImageFileName)" style="height:25%;width:25%;object-fit:cover;" />
+                    <img src="@Url.Content("~/Images/"+board.MainImageFileName)" style="height:25%;width:25%;object-fit:cover;" />
                 </td>
                 <td>@(board.IsAvailable ? "Ledig" : "Ikke Ledig")</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@board.Id">Details</a>
-                    @if (User.Identity.IsAuthenticated && User.IsInRole("Administrator"))
+                    @if (User.Identity.IsAuthenticated)
                     {
-                        <a asp-action="Edit" asp-route-id="@board.Id">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@board.Id">Delete</a>
+                        @if (User.IsInRole("Administrator") || User.IsInRole("Manager"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@board.Id">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@board.Id">Delete</a>
+                        }
                     }
                     @if (SignInManager.IsSignedIn(User) && board.IsAvailable)
                     {

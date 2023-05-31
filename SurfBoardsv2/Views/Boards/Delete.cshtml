@@ -1,4 +1,4 @@
-﻿@model SurfBoardsv2.Models.Board
+﻿@model SurfBoardsv2.Core.ViewModels.BoardViewModel
 
 @{
     ViewData["Title"] = "Delete";
@@ -61,10 +61,10 @@
             @Html.DisplayFor(model => model.Equipment)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageFileName)
+            @Html.DisplayNameFor(model => model.MainImageFilePath)
         </dt>
         <dd class="col-sm-10">
-            <img src="@Url.Content("~/Images/"+Model.ImageFileName)" alt="My Image" style='height: 50%; width: 50%; object-fit: contain' "  />½
+            <img src="@Url.Content("~/Images/"+Model.MainImageFilePath)" alt="My Image" style='height: 50%; width: 50%; object-fit: contain'/>
         </dd>
     </dl>
     

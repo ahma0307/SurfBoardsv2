@@ -20,10 +20,6 @@ namespace SurfBoardsv2.Models
         public Guid RentedBoardId { get; set; }
         public Guid BoardRenterId { get; set; }
 
-        
-        //public Board RentedBoard { get; set; }
-        //public SurfBoardsv2User BoardRenter { get; set; }
-
         //[Timestamp]
         //public byte[] RowVersion { get; set; }
     }
