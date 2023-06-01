@@ -87,7 +87,7 @@ namespace SurfBoardsv2.Controllers
 
 
 
-            int pageSize = 10;
+            int pageSize = 3;
             return View(await PaginatedList<Board>.CreateAsync(board.AsNoTracking(), pageNumber ?? 1, pageSize));
 
         }
