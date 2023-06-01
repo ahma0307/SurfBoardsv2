@@ -1,4 +1,4 @@
-﻿@model PaginatedList<SurfBoardsv2.Models.Board>
+﻿@model IEnumerable<SurfBoardsv2.Models.Board>
 @using SurfBoardsv2.Models
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<SurfBoardsv2User> SignInManager
@@ -30,40 +30,38 @@
     <thead>
         <tr>
             <th>
-                Name
+                @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                Length
+                @Html.DisplayNameFor(model => model.Length)
             </th>
             <th>
-                Width
+                @Html.DisplayNameFor(model => model.Width)
             </th>
             <th>
-                Thickness
-            </th>
-
-            <th>
-                Volume
+                @Html.DisplayNameFor(model => model.Thickness)
             </th>
             <th>
-                Type
+                @Html.DisplayNameFor(model => model.Volume)
             </th>
             <th>
-                Price
+                @Html.DisplayNameFor(model => model.Type)
             </th>
             <th>
-                Equipment
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Equipment)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.MainImageId)
             </th>
             <th>
-                IsAvailable
+                @Html.DisplayNameFor(model => model.IsAvailable)
             </th>
             <th></th>
         </tr>
     </thead>
-    
     <tbody>
 
         @foreach (var board in Model)
@@ -98,8 +96,6 @@
                 </td>
             </tr>
         }
-        <p id="p1">
-        </p>
     </tbody>
 </table>
 <div>
