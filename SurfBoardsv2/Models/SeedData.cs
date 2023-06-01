@@ -218,7 +218,7 @@ namespace SurfBoardsv2.Models
                     var image = new BoardImage
                     {
                         FileName = fileName,
-                        FilePath = filePath,
+                        Extension = filePath,
                         BoardId = board.Id,
                         IsMainImage = true
                     };

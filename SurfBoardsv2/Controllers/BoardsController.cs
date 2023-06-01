@@ -70,9 +70,11 @@ namespace SurfBoardsv2.Controllers
                 foreach (Board availableBoard in _context.Boards)
                 {
                     availableBoard.IsAvailable = true;
-                    await _context.SaveChangesAsync();
                 }
             }
+
+            await _context.SaveChangesAsync();
+
             if (searchString != null)
             {
                 pageNumber = 1;
@@ -95,11 +97,21 @@ namespace SurfBoardsv2.Controllers
                 //The s => s.Title!.Contains(searchString) code above is a Lambda Expression.
             }
 
+            const int pageSize = 8;
+            pageNumber = pageNumber ?? 1;
 
+            var filteredBoards = await board
+                                .Skip(((int)pageNumber - 1) * pageSize)
+                                .Take(pageSize)
+                                .ToListAsync();
 
-            int pageSize = 10;
-            return View(await PaginatedList<Board>.CreateAsync(board.AsNoTracking(), pageNumber ?? 1, pageSize));
+            // Pass total pages and current page to view
+            ViewData["TotalPages"] = (int)Math.Ceiling((double)await board.CountAsync() / pageSize);
+            ViewData["PageIndex"] = pageNumber;
+            ViewData["HasPreviousPage"] = pageNumber > 1;
+            ViewData["HasNextPage"] = pageNumber < (int)ViewData["TotalPages"];
 
+            return View(filteredBoards);
         }
 
 
@@ -133,62 +145,54 @@ namespace SurfBoardsv2.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = Constants.Policies.RequireManager)]
-        public async Task<IActionResult> Create([Bind("Name, Length, Width, Thickness, Volume, Type, Price, Equipment, IsAvailable")] Board board, [FromForm]List<IFormFile> imageFiles)
+        public async Task<IActionResult> Create([Bind("Name,Length,Width,Thickness,Volume,Type,Price,Equipment,IsAvailable,ImageFiles")] Board board)
         {
             if (ModelState.IsValid)
             {
-                board.Id = Guid.NewGuid();
-                board.Images = new List<BoardImage>();
+                var i = 0;
 
-                for (int i = 0; i < imageFiles.Count(); i++)
+                foreach (IFormFile imageFile in board.ImageFiles)
                 {
-                    // Choose the imagefile in question
-                    var imageFile = imageFiles.ElementAt(i);
-                    
-                    // Process and save the uploaded image files
-                    var fileName = board.Name + "-" + (i + 1).ToString() + ".png";// Generate a unique file name
+                    string wwwRootPath = _webHostEnvironment.WebRootPath;
+                    string fileName = Path.GetFileNameWithoutExtension(imageFile.FileName);
+                    string extension = Path.GetExtension(imageFile.FileName);
+                    fileName = fileName + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + extension;
+                    string path = Path.Combine(wwwRootPath + "/Images/", fileName);
 
-                    // Set the directory where the images will be stored (adjust this path as per your application's requirements)
-                    string imageDirectory = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
-
-                    // Combine the directory and unique filename to create the full filepath
-                    string filePath = Path.Combine(imageDirectory, fileName);
-
-                    // Save the file to the server
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    using (var fileStream = new FileStream(path,FileMode.Create))
                     {
                         await imageFile.CopyToAsync(fileStream);
                     }
 
-                    // Create a new BoardImage entity for each uploaded image file
-                    var image = new BoardImage
+                    var boardImage = new BoardImage
                     {
-                        Id = Guid.NewGuid(),
                         FileName = fileName,
-                        FilePath = filePath,
+                        Extension = extension,
                         BoardId = board.Id,
-                        IsMainImage = false
+                        IsMainImage = false,
+                        ImageFile = imageFile
                     };
 
-                    if (!board.Images.Any())
+                    if (i == 0)
                     {
-                        image.IsMainImage = true;
+                        boardImage.IsMainImage = true;
                     }
 
-                    board.Images.Add(image);
-                    await _context.BoardImages.AddAsync(image);
+                    _context.Add(boardImage);
                     await _context.SaveChangesAsync();
+                    i++;
                 }
+                
+                List<BoardImage> boardImages = await _context.BoardImages.Where(x => x.BoardId == board.Id).ToListAsync();
 
-                var mainImage = board.Images.FirstOrDefault(x => x.IsMainImage == true);
-                board.MainImageId = mainImage?.Id;
+                var mainImage = boardImages.FirstOrDefault(x => x.IsMainImage == true);
 
-                // Save the board and its images to the database
+                board.MainImageFileName = mainImage.FileName;
+                board.MainImageId = mainImage.Id;
+                
                 _context.Add(board);
                 await _context.SaveChangesAsync();
-
-
-                return RedirectToAction("Details", board.Id);
+                return RedirectToAction("Index");
             }
 
             return View(board);
@@ -293,7 +297,7 @@ namespace SurfBoardsv2.Controllers
                         var image = new BoardImage
                         {
                             FileName = fileName,
-                            FilePath = filePath
+                            Extension = filePath
                         };
 
                         existingBoard.Images.Add(image);
