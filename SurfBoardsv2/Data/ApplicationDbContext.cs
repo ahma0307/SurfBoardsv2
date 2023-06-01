@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SurfBoardsv2.Models;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SurfBoardsv2.Data
 {

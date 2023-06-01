@@ -5,6 +5,7 @@ using SurfBoardsv2.Models;
 using SurfBoardsv2.Data;
 using System.Text.Encodings.Web;
 using static System.Net.WebRequestMethods;
+using SurfBoardsv2.Controllers;
 
 namespace SurfBoardsv2.Models
 {
@@ -154,6 +155,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "Fin, Paddle, Pump, Leash",
                        ImageFileName = "",
                        IsAvailable = true,
+                       
                    }
                     );
                 context.SaveChanges();

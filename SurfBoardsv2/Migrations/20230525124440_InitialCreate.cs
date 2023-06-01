@@ -75,7 +75,7 @@ namespace SurfBoardsv2.Migrations
 //<<<<<<<< HEAD:SurfBoardsv2/Migrations/20230525124440_InitialCreate.cs
                     RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
 //========
-                    Rents = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    
 //>>>>>>>> master:SurfBoardsv2/Migrations/20230525092334_InitialCreate.cs
                 },
                 constraints: table =>

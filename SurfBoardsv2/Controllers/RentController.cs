@@ -52,7 +52,7 @@ namespace SurfBoardsv2.Controllers
         [Authorize]
         public async Task<IActionResult> Create(Guid boardId, string userId)
         {
-
+            
             var board = await _context.Boards.FindAsync(boardId);
             var user = await _context.Users.FindAsync(userId);
 

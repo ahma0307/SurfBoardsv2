@@ -123,7 +123,7 @@ namespace SurfBoardsv2.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = Constants.Policies.RequireAdmin)]
-        public async Task<IActionResult> Create([Bind("Id,Name,Length,Width,Thickness,volume,type,Price,Equipment, ImageFile, ImageFileName, IsAvailable, Rents")] Board board)
+        public async Task<IActionResult> Create([Bind("Id,Name,Length,Width,Thickness,volume,type,Price,Equipment, ImageFile, ImageFileName, IsAvailable")] Board board)
         {
 
             if (ModelState.IsValid)
@@ -186,7 +186,7 @@ namespace SurfBoardsv2.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = Constants.Policies.RequireAdmin)]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Length,Width,Thickness,volume,type,Price,Equipment, ImageFile, ImageFileName, IsAvailable, Rents")] Board board)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Length,Width,Thickness,volume,type,Price,Equipment, ImageFile, ImageFileName, IsAvailable")] Board board)
         {
             if (id != board.Id)
             {

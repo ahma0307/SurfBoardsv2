@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-
+using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -26,6 +26,8 @@ namespace SurfBoardsv2.Models
         public string? ImageFileName { get; set; }
         [ConcurrencyCheck]
         public bool IsAvailable { get; set; }
+
+        public bool PublicBoard { get; set; }
         public ICollection<Rent> Rents { get; set; }
 
         [Timestamp]
