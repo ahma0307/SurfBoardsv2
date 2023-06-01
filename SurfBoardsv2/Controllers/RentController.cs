@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SurfBoardsv2.Core.ViewModels;
 using SurfBoardsv2.Data;
 using SurfBoardsv2.Models;
 namespace SurfBoardsv2.Controllers
@@ -22,12 +24,24 @@ namespace SurfBoardsv2.Controllers
         }
 
         // GET: Rents
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return _context.Rents != null ?
-                        View(await _context.Rents.ToListAsync()) :
-                        Problem("Entity set 'ApplicationDbContext.Rent'  is null.");
+            //Fetching from Database
+            var rents = _context.Rents.ToList(); 
+            var boards = _context.Boards.ToList();
+            var users = _context.Users.ToList();
 
+            //Supplies RentViewModel with the data needed for the view
+            var rentViewModels = rents.Select(rent => new RentViewModel
+            {
+                Id = rent.Id,
+                RentPickDate = rent.RentPickDate,
+                RentDropDate = rent.RentDropDate,
+                BoardName = boards.Find(x => x.Id == rent.RentedBoardId).Name,
+                UserFullName = users.Find(x => x.Id == rent.BoardRenterId.ToString()).GetFullName()
+            }).ToList();
+
+            return View(rentViewModels);
         }
 
         // GET: Rents/Details/5
@@ -46,6 +60,50 @@ namespace SurfBoardsv2.Controllers
             }
 
             return View(rent);
+        }
+
+        //GET: Rents/AdminCreate
+        [Authorize(Roles = "Admin,Manager")]
+        public IActionResult AdminCreate()
+        {
+            var currentDate = DateTime.Now.Date;
+
+            if (currentDate.DayOfWeek == DayOfWeek.Saturday)
+            {
+                currentDate = currentDate.AddDays(2);
+            }
+            else if (currentDate.DayOfWeek == DayOfWeek.Sunday)
+            {
+                currentDate = currentDate.AddDays(1);
+            }
+
+            var initialRentPickDate = currentDate;
+
+            var nextWeekday = currentDate.AddDays(1);
+
+            while (nextWeekday.DayOfWeek == DayOfWeek.Saturday || nextWeekday.DayOfWeek == DayOfWeek.Sunday)
+            {
+                nextWeekday = nextWeekday.AddDays(1);
+            }
+
+            var initialRentDropDate = nextWeekday;
+
+            //Fetching from Database
+            var rents = _context.Rents.ToList();
+            var boards = _context.Boards.ToList();
+            var users = _context.Users.ToList();
+
+            //Supplies RentViewModel with the data needed for the view
+            var rentViewModels = rents.Select(rent => new RentViewModel
+            {
+                Id = rent.Id,
+                RentPickDate = rent.RentPickDate,
+                RentDropDate = rent.RentDropDate,
+                BoardName = boards.Find(x => x.Id == rent.RentedBoardId).Name,
+                UserFullName = users.Find(x => x.Id == rent.BoardRenterId.ToString()).GetFullName()
+            }).ToList();
+
+            return View();
         }
 
         // GET: Rents/Create
@@ -83,22 +141,8 @@ namespace SurfBoardsv2.Controllers
                 RentPickDate = initialRentPickDate,
                 RentDropDate = initialRentDropDate,
                 RentedBoardId = board.Id,
-                BoardRenterId = Guid.Parse(user.Id),
-                //RentedBoard = board,
-                //BoardRenter = user
+                BoardRenterId = Guid.Parse(user.Id)
             };
-
-
-            var model = new Tuple<Rent, Board, SurfBoardsv2User>(rent, board, user);
-
-            return View(model);
-        }
-
-
-        public async Task<IActionResult> Confirmation(Rent rent)
-        {
-            var board = await _context.Boards.FindAsync(rent.RentedBoardId);
-            var user = await _context.Users.FindAsync(rent.BoardRenterId.ToString());
 
             var model = new Tuple<Rent, Board, SurfBoardsv2User>(rent, board, user);
 
@@ -134,11 +178,6 @@ namespace SurfBoardsv2.Controllers
         }
 
 
-
-
-
-
-
         // GET: Rents/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
@@ -148,11 +187,18 @@ namespace SurfBoardsv2.Controllers
             }
 
             var rent = await _context.Rents.FindAsync(id);
+
             if (rent == null)
             {
                 return NotFound();
             }
-            return View(rent);
+
+            var board = await _context.Boards.FindAsync(rent.RentedBoardId);
+            var user = await _context.Users.FindAsync(rent.BoardRenterId);
+
+            var model = new Tuple<Rent, Board, SurfBoardsv2User>(rent, board, user);
+
+            return View(model);
         }
 
         // POST: Rents/Edit/5
@@ -189,6 +235,17 @@ namespace SurfBoardsv2.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(rent);
+        }
+
+        // GET : Rents/Confirmation
+        public async Task<IActionResult> Confirmation(Rent rent)
+        {
+            var board = await _context.Boards.FindAsync(rent.RentedBoardId);
+            var user = await _context.Users.FindAsync(rent.BoardRenterId.ToString());
+
+            var model = new Tuple<Rent, Board, SurfBoardsv2User>(rent, board, user);
+
+            return View(model);
         }
 
         // GET: Rents/Delete/5

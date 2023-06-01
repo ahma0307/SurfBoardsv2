@@ -8,36 +8,39 @@
 @model ICollection<SurfBoardsv2.Models.SurfBoardsv2User>
 <div class="text-center">
     <h1 class="display-4">Users</h1>
-    @if (User.Identity.IsAuthenticated && User.IsInRole("Administrator"))
+    @if (User.Identity.IsAuthenticated)
     {
-        @if (@Model != null && @Model.Any())
+        @if (User.IsInRole("Administrator") || User.IsInRole("Manager"))
         {
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">First</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Edit</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var user in Model)
-                    {
+            @if (@Model != null && @Model.Any())
+            {
+                <table class="table">
+                    <thead>
                         <tr>
-                            <th scope="row">@user.Id</th>
-                            <td>@user.GetFullName()</td>
-                            <td>@user.DOB</td>
-                            <td>@user.Email</td>
-                            <td>
-                                <a asp-controller="User" asp-action="Delete" asp-route-id="@user.Id">Delete</a>
-                                <a asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edit</a>
-                            </td>
+                            <th scope="col">#</th>
+                            <th scope="col">First</th>
+                            <th scope="col">Last</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Edit</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <th scope="row">@user.Id</th>
+                                <td>@user.GetFullName()</td>
+                                <td>@user.DOB</td>
+                                <td>@user.Email</td>
+                                <td>
+                                    <a asp-controller="User" asp-action="Delete" asp-route-id="@user.Id">Delete</a>
+                                    <a asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edit</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
         }
 
     }

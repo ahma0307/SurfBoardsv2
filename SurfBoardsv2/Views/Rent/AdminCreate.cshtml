@@ -1,0 +1,60 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<h1>Create</h1>
+
+<h4>Rent</h4>
+<hr />
+@*<div class="row">
+    <div class="col-md-4">
+        @*Item1 = Rent, Item2 = Board and Item3 = SurfBoardsv2User*@
+        @if (Model.Item1 != null && Model.Item2 != null)
+        {
+            @*<p>Selected board: @Model.Item2.Name</p>
+            <p>User: @Model.Item3.GetFullName()</p>
+            <form asp-action="Create" asp-controller="Rent" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <input id="rent-pick-date" name="RentPickDate" class="form-control" type="date" min="@DateTime.Now"
+                           onfocus="this.setAttribute('min', this.value)"
+                           oninput="validateRentPickDate(this)" />
+                    <span asp-validation-for="Item1.RentPickDate" class="text-danger"></span>
+
+                </div>
+                <div class="form-group">
+                    <input id="rent-drop-date" name="RentDropDate" class="form-control" type="date" min="@DateTime.Now.AddDays(1)"
+                           onfocus="this.setAttribute('min', this.value)"
+                           oninput="validateRentDropDate(this)" />
+                    <span asp-validation-for="Item1.RentDropDate" class="text-danger"></span>
+
+                </div>
+                <input type="hidden" name="RentedBoardId" value="@Model.Item2.Id" />
+                <input type="hidden" name="BoardRenterId" value="@Model.Item3.Id" />
+
+                <button id="rent-surfboard-button" type="submit" class="w-100 btn btn-lg btn-primary">Rent</button>
+
+                <script>
+                    const rentSurfboardBtn = document.getElementById('rent-surfboard-button');
+
+                    rentSurfboardBtn.addEventListener('click', function () {
+                        return confirm('Are you sure you want to rent this board?');
+                    });
+
+                </script>
+
+            </form>*@
+        }
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" asp-controller="Boards">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

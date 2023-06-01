@@ -27,13 +27,4 @@
     <PackageReference Include="PagedList.Mvc" Version="4.5.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\Images\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\Images\32a77fa1-b63c-4e15-b8a3-7d75993a9583.png" />
-    <None Include="wwwroot\Images\83c4bb8f-e579-4a74-898e-218f242d24f7.png" />
-  </ItemGroup>
-
 </Project>

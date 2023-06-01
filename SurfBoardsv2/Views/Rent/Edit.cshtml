@@ -1,4 +1,7 @@
-﻿@model SurfBoardsv2.Models.Rent
+﻿@model Tuple<SurfBoardsv2.Models.Rent, SurfBoardsv2.Models.Board, SurfBoardsv2.Models.SurfBoardsv2User>
+@using SurfBoardsv2.Models
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<SurfBoardsv2User> UserManager
 
 @{
     ViewData["Title"] = "Edit";
@@ -11,29 +14,40 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
+        @*Item1 = Rent, Item2 = Board and Item3 = SurfBoardsv2User*@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="@Model.Item1.Id" />
             <div class="form-group">
-                <label asp-for="RentPickDate" class="control-label"></label>
-                <input asp-for="RentPickDate" class="form-control" />
-                <span asp-validation-for="RentPickDate" class="text-danger"></span>
+                <label asp-for="@Model.Item1.RentPickDate" class="control-label"></label>
+                <input asp-for="@Model.Item1.RentPickDate" class="form-control" />
+                <span asp-validation-for="@Model.Item1.RentPickDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="RentDropDate" class="control-label"></label>
-                <input asp-for="RentDropDate" class="form-control" />
-                <span asp-validation-for="RentDropDate" class="text-danger"></span>
-            </div>
-@*            <div class="form-group">
-                <label asp-for="RentedBoard.Name" class="control-label"></label>
-                <input asp-for="RentedBoard.Name" class="form-control" />
-                <span asp-validation-for="RentedBoard.Name" class="text-danger"></span>
+                <label asp-for="@Model.Item1.RentDropDate" class="control-label"></label>
+                <input asp-for="@Model.Item1.RentDropDate" class="form-control" />
+                <span asp-validation-for="@Model.Item1.RentDropDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="BoardRenter" class="control-label"></label>
-                <input asp-for="BoardRenter" class="form-control" />
-                <span asp-validation-for="BoardRenter" class="text-danger"></span>
-            </div>*@
+                <label asp-for="@Model.Item2.Name" class="control-label"></label>
+                <input asp-for="@Model.Item2.Name" class="form-control" />
+                <span asp-validation-for="@Model.Item2.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Item3.GetFullName()" class="control-label"></label>
+                <input asp-for="@Model.Item3.GetFullName()" class="form-control" />
+                <span asp-validation-for="@Model.Item3.GetFullName()" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Item3.Email" class="control-label"></label>
+                <input asp-for="@Model.Item3.Email" class="form-control" />
+                <span asp-validation-for="@Model.Item3.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Item3.UserName" class="control-label"></label>
+                <input asp-for="@Model.Item3.UserName" class="form-control" />
+                <span asp-validation-for="@Model.Item3.UserName" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

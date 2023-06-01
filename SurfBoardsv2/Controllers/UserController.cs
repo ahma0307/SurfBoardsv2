@@ -46,9 +46,7 @@ namespace SurfBoardsv2.Controllers
 
             var userRoles = await _signInManager.UserManager.GetRolesAsync(user);
 
-         
 
-       
             var roleItems = roles.Select(role =>
             new SelectListItem(
                 role.Name,

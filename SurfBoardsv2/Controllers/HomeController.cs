@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SurfBoardsv2.Models;
 using System.Diagnostics;
+using SurfBoardsv2.Core.ViewModels;
 
 namespace SurfBoardsv2.Controllers
 {
