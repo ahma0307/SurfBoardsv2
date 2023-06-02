@@ -60,6 +60,13 @@
                     <option value="false">Not available</option>
                 </select>
             </div>
+            <div class="form-group">
+                <label asp-for="PublicBoard" class="control-label">Visibility</label><span class="text-danger">*</span>
+                <select asp-for="PublicBoard" class="form-control">
+                    <option value="true">For any user</option>
+                    <option value="false">Only for logged in users</option>
+                </select>
+            </div>
 @*            <div class="form-group">
                 <label asp-for="ImageFiles" class="control-label">Image Files:</label>
                 <input asp-for="ImageFiles" type="file" multiple />

@@ -47,33 +47,15 @@ namespace SurfBoardsv2.Controllers
         public async Task<IActionResult> Index(string currentFilter, string searchString, int? pageNumber)
         {
             //Making boards unavailable if they appear in a rent in the time period
-            if (await _context.Rents.AnyAsync())
-            {
-                foreach (Rent rent in _context.Rents)
-                {
-                    if (rent.RentPickDate <= DateTime.Today.AddDays(1) && rent.RentDropDate >= DateTime.Today.Date)
-                    {
-                        var unAvailableBoard = await _context.Boards.FindAsync(rent.RentedBoardId);
-                        unAvailableBoard.IsAvailable = false;
-                        await _context.SaveChangesAsync();
-                    }
-                    else
-                    {
-                        var unAvailableBoard = await _context.Boards.FindAsync(rent.RentedBoardId);
-                        unAvailableBoard.IsAvailable = true;
-                        await _context.SaveChangesAsync();
-                    }
-                }
-            }
-            else
-            {
-                foreach (Board availableBoard in _context.Boards)
-                {
-                    availableBoard.IsAvailable = true;
-                }
-            }
+            var today = DateTime.Today;
 
-            await _context.SaveChangesAsync();
+            // Find all active rents
+            var activeRents = await _context.Rents
+                .Where(r => r.RentPickDate <= today && r.RentDropDate >= today)
+                .ToListAsync();
+
+            // Find IDs of all boards that are currently rented out
+            var rentedBoardIds = activeRents.Select(r => r.RentedBoardId).ToList();
 
             if (searchString != null)
             {
@@ -85,28 +67,26 @@ namespace SurfBoardsv2.Controllers
             }
 
             ViewData["CurrentFilter"] = searchString;
-            //The first line of the Index action method creates a LINQ query to select the boards:
-            var board = from m in _context.Boards
-                        select m;//The query is only defined at this point, it has not been run against the database
 
-            if (!string.IsNullOrEmpty(searchString)) // If the searchString parameter contains a string, the movies query is modified to filter on the value of the search string:
+            var boardQuery = from m in _context.Boards
+                             where !rentedBoardIds.Contains(m.Id) // Filter out boards that are currently rented out
+                             select m;
+
+            if (!string.IsNullOrEmpty(searchString))
             {
-                board = board.Where(s => s.Name!.Contains(searchString));
-
-
-                //The s => s.Title!.Contains(searchString) code above is a Lambda Expression.
+                boardQuery = boardQuery.Where(s => s.Name.Contains(searchString));
             }
 
             const int pageSize = 8;
             pageNumber = pageNumber ?? 1;
 
-            var filteredBoards = await board
+            var filteredBoards = await boardQuery
                                 .Skip(((int)pageNumber - 1) * pageSize)
                                 .Take(pageSize)
                                 .ToListAsync();
 
             // Pass total pages and current page to view
-            ViewData["TotalPages"] = (int)Math.Ceiling((double)await board.CountAsync() / pageSize);
+            ViewData["TotalPages"] = (int)Math.Ceiling((double)await boardQuery.CountAsync() / pageSize);
             ViewData["PageIndex"] = pageNumber;
             ViewData["HasPreviousPage"] = pageNumber > 1;
             ViewData["HasNextPage"] = pageNumber < (int)ViewData["TotalPages"];
@@ -116,7 +96,7 @@ namespace SurfBoardsv2.Controllers
 
 
         // GET: Boards/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid id)
         {
             if (id == null || _context.Boards == null)
             {
@@ -145,7 +125,7 @@ namespace SurfBoardsv2.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = Constants.Policies.RequireManager)]
-        public async Task<IActionResult> Create([Bind("Id,Name,Length,Width,Thickness,Volume,Type,Price,Equipment,IsAvailable")] Board board)
+        public async Task<IActionResult> Create([Bind("Id,Name,Length,Width,Thickness,Volume,Type,Price,Equipment,IsAvailable,PublicBoard")] Board board)
         {
             if (ModelState.IsValid)
             {
@@ -201,7 +181,7 @@ namespace SurfBoardsv2.Controllers
 
         // GET: Boards/Edit/5
 
-        public IActionResult Edit(Guid? id)
+        public IActionResult Edit(Guid id)
         {
             if (id == null || _context.Boards == null)
             {
@@ -229,8 +209,12 @@ namespace SurfBoardsv2.Controllers
                 Price = board.Price.ToString(),
                 Equipment = board.Equipment,
                 IsAvailable = board.IsAvailable,
+                PublicBoard = board.PublicBoard,
+                
                 //Images = board.Images.ToList()
             };
+            
+            
 
             return View(boardViewModel);
         }
@@ -242,19 +226,14 @@ namespace SurfBoardsv2.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = Constants.Policies.RequireManager)]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Length,Width,Thickness,Volume,Type,Price,Equipment,IsAvailable")] BoardViewModel boardViewModel)
+        public async Task<IActionResult> Edit([Bind("Id,Name,Length,Width,Thickness,Volume,Type,Price,Equipment,IsAvailable,PublicBoard")] BoardViewModel boardViewModel)
         {
-            if (id != boardViewModel.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 // Retrieve the existing board from the database
                 var existingBoard = await _context.Boards
                     //.Include(b => b.Images)
-                    .FirstOrDefaultAsync(b => b.Id == id);
+                    .FirstOrDefaultAsync(m => m.Id == boardViewModel.Id);
 
                 if (existingBoard == null)
                 {
@@ -262,15 +241,17 @@ namespace SurfBoardsv2.Controllers
                 }
 
                 // Update the editable properties of the existing board
+                existingBoard.Id = boardViewModel.Id;
                 existingBoard.Name = boardViewModel.Name;
-                existingBoard.Length = float.Parse(boardViewModel.Length, CultureInfo.InvariantCulture);
-                existingBoard.Width = float.Parse(boardViewModel.Width, CultureInfo.InvariantCulture);
-                existingBoard.Thickness = float.Parse(boardViewModel.Thickness, CultureInfo.InvariantCulture);
-                existingBoard.Volume = float.Parse(boardViewModel.Volume, CultureInfo.InvariantCulture);
+                existingBoard.Length = float.Parse(boardViewModel.Length);
+                existingBoard.Width = float.Parse(boardViewModel.Width);
+                existingBoard.Thickness = float.Parse(boardViewModel.Thickness);
+                existingBoard.Volume = float.Parse(boardViewModel.Volume);
                 existingBoard.Type = boardViewModel.Type;
-                existingBoard.Price = decimal.Parse(boardViewModel.Price, CultureInfo.InvariantCulture);
+                existingBoard.Price = decimal.Parse(boardViewModel.Price);
                 existingBoard.Equipment = boardViewModel.Equipment;
                 existingBoard.IsAvailable = boardViewModel.IsAvailable;
+                existingBoard.PublicBoard = boardViewModel.PublicBoard;
 
                 // Check if new image files were uploaded
                 //if (boardViewModel.ImageFiles != null && boardViewModel.ImageFiles.Count > 0)
@@ -312,7 +293,7 @@ namespace SurfBoardsv2.Controllers
                 _context.Update(existingBoard);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("Details", existingBoard.Id);
+                return RedirectToAction("Index");
             }
 
             return View(boardViewModel);

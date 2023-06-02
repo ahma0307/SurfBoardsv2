@@ -53,9 +53,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Equipment)
             </th>
-       @*     <th>
+            <th>
                 @Html.DisplayNameFor(model => model.MainImageId)
-            </th>*@
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.IsAvailable)
             </th>
@@ -78,7 +78,7 @@
                 <td>
                     <img src="@Url.Content("~/Images/"+board.MainImageFileName)" style="height:25%;width:25%;object-fit:cover;" />
                 </td>
-                <td>@(board.IsAvailable ? "Ledig" : "Ikke Ledig")</td>
+                @*<td>@(board.IsAvailable ? "Available" : "Not available")</td>*@
                 <td>
                     <a asp-action="Details" asp-route-id="@board.Id">Details</a>
                     @if (User.Identity.IsAuthenticated)

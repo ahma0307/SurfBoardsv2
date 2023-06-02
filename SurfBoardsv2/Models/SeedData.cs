@@ -75,6 +75,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "",
                        MainImageFileName = "",
                        IsAvailable = true,
+                       PublicBoard = true
                    },
 
                    new Board
@@ -89,6 +90,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "",
                        MainImageFileName = "",
                        IsAvailable = true,
+                       PublicBoard = true
                    },
 
                    new Board
@@ -103,6 +105,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "",
                        MainImageFileName = "",
                        IsAvailable = true,
+                       PublicBoard = true
                    },
                    new Board
                    {
@@ -116,6 +119,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "",
                        MainImageFileName = "",
                        IsAvailable = true,
+                       PublicBoard = true
                    },
                    new Board
                    {
@@ -129,6 +133,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "",
                        MainImageFileName = "",
                        IsAvailable = true,
+                       PublicBoard = true
                    },
                    new Board
                    {
@@ -142,6 +147,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "",
                        MainImageFileName = "",
                        IsAvailable = true,
+                       PublicBoard = true
                    },
                    new Board
                    {
@@ -155,6 +161,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "",
                        MainImageFileName = "",
                        IsAvailable = true,
+                       PublicBoard = true
                    },
                    new Board
                    {
@@ -168,6 +175,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "Paddle",
                        MainImageFileName = "",
                        IsAvailable = true,
+                       PublicBoard = false
                    },
                    new Board
                    {
@@ -181,6 +189,7 @@ namespace SurfBoardsv2.Models
                        Equipment = "Fin, Paddle, Pump, Leash",
                        MainImageFileName = "",
                        IsAvailable = true,
+                       PublicBoard = false
                    },
                    new Board
                    {
@@ -194,7 +203,8 @@ namespace SurfBoardsv2.Models
                        Equipment = "Fin, Paddle, Pump, Leash",
                        MainImageFileName = "",
                        IsAvailable = true,
-                       
+                       PublicBoard = false
+
                    }
                     );
 
