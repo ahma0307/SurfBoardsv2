@@ -141,7 +141,7 @@ namespace SurfBoardsv2.Controllers
                 RentPickDate = initialRentPickDate,
                 RentDropDate = initialRentDropDate,
                 RentedBoardId = board.Id,
-                BoardRenterId = Guid.Parse(user.Id)
+                BoardRenterId = Guid.Parse(user.Id),
             };
 
             var model = new Tuple<Rent, Board, SurfBoardsv2User>(rent, board, user);
@@ -153,10 +153,9 @@ namespace SurfBoardsv2.Controllers
         // POST: Rents/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RentPickDate,RentDropDate,RentedBoardId,BoardRenterId")] Rent rent)
+        public async Task<IActionResult> Create([Bind("Id,RentPickDate,RentDropDate,RentedBoardId,BoardRenterId,RowVersion")] Rent rent)
         {
             if (!ModelState.IsValid)
             {
@@ -168,13 +167,35 @@ namespace SurfBoardsv2.Controllers
                 return View(rent);
             }
 
+            var board = await _context.Boards.FindAsync(rent.RentedBoardId);
+            var otherRents = await _context.Rents.Where(x => x.RentedBoardId == board.Id).ToListAsync();
+
+            foreach (var otherRent in otherRents)
+            {
+                if (otherRent.RentPickDate <= rent.RentDropDate && otherRent.RentDropDate >= rent.RentPickDate)
+                {
+                    return View(rent);
+                }
+            }
+
             rent.TimeOfOrder = DateTime.Now;
-            rent.Id = Guid.NewGuid();
+            
 
-            _context.Add(rent);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Add(rent);
+                await _context.SaveChangesAsync();
 
-            return RedirectToAction("Confirmation", rent);
+                return RedirectToAction("Confirmation", rent);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                ModelState.AddModelError("", "Unable to save changes. " +
+                "The record you attempted to edit was modified by another user after you got the original values. " +
+                "The edit operation was canceled and the current values in the database have been displayed. " +
+                "If you still want to edit this record, click the Save button again. ");
+            }
+            return View(rent);
         }
 
 
@@ -207,7 +228,7 @@ namespace SurfBoardsv2.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Manager")]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,RentPickDate,RentDropDate,SurfBoardModels,UserId")] Rent rent)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,RentPickDate,RentDropDate,RentedBoardId,BoardRenterId")] Rent rent)
         {
             if (id != rent.Id)
             {

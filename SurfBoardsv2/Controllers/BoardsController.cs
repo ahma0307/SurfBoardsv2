@@ -145,50 +145,50 @@ namespace SurfBoardsv2.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = Constants.Policies.RequireManager)]
-        public async Task<IActionResult> Create([Bind("Name,Length,Width,Thickness,Volume,Type,Price,Equipment,IsAvailable,ImageFiles")] Board board)
+        public async Task<IActionResult> Create([Bind("Id,Name,Length,Width,Thickness,Volume,Type,Price,Equipment,IsAvailable")] Board board)
         {
             if (ModelState.IsValid)
             {
-                var i = 0;
+                //var i = 0;
 
-                foreach (IFormFile imageFile in board.ImageFiles)
-                {
-                    string wwwRootPath = _webHostEnvironment.WebRootPath;
-                    string fileName = Path.GetFileNameWithoutExtension(imageFile.FileName);
-                    string extension = Path.GetExtension(imageFile.FileName);
-                    fileName = fileName + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + extension;
-                    string path = Path.Combine(wwwRootPath + "/Images/", fileName);
+                //foreach (IFormFile imageFile in board.ImageFiles)
+                //{
+                //    string wwwRootPath = _webHostEnvironment.WebRootPath;
+                //    string fileName = Path.GetFileNameWithoutExtension(imageFile.FileName);
+                //    string extension = Path.GetExtension(imageFile.FileName);
+                //    fileName = fileName + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + extension;
+                //    string path = Path.Combine(wwwRootPath + "/Images/", fileName);
 
-                    using (var fileStream = new FileStream(path,FileMode.Create))
-                    {
-                        await imageFile.CopyToAsync(fileStream);
-                    }
+                //    using (var fileStream = new FileStream(path,FileMode.Create))
+                //    {
+                //        await imageFile.CopyToAsync(fileStream);
+                //    }
 
-                    var boardImage = new BoardImage
-                    {
-                        FileName = fileName,
-                        Extension = extension,
-                        BoardId = board.Id,
-                        IsMainImage = false,
-                        ImageFile = imageFile
-                    };
+                //    var boardImage = new BoardImage
+                //    {
+                //        FileName = fileName,
+                //        Extension = extension,
+                //        BoardId = board.Id,
+                //        IsMainImage = false,
+                //        ImageFile = imageFile
+                //    };
 
-                    if (i == 0)
-                    {
-                        boardImage.IsMainImage = true;
-                    }
+                //    if (i == 0)
+                //    {
+                //        boardImage.IsMainImage = true;
+                //    }
 
-                    _context.Add(boardImage);
-                    await _context.SaveChangesAsync();
-                    i++;
-                }
+                //    _context.Add(boardImage);
+                //    await _context.SaveChangesAsync();
+                //    i++;
+                //}
                 
-                List<BoardImage> boardImages = await _context.BoardImages.Where(x => x.BoardId == board.Id).ToListAsync();
+                //List<BoardImage> boardImages = await _context.BoardImages.Where(x => x.BoardId == board.Id).ToListAsync();
 
-                var mainImage = boardImages.FirstOrDefault(x => x.IsMainImage == true);
+                //var mainImage = boardImages.FirstOrDefault(x => x.IsMainImage == true);
 
-                board.MainImageFileName = mainImage.FileName;
-                board.MainImageId = mainImage.Id;
+                //board.MainImageFileName = mainImage.FileName;
+                //board.MainImageId = mainImage.Id;
                 
                 _context.Add(board);
                 await _context.SaveChangesAsync();
@@ -209,7 +209,7 @@ namespace SurfBoardsv2.Controllers
             }
 
             var board = _context.Boards
-                .Include(b => b.Images) // Include the images associated with the board
+            //    .Include(b => b.Images) // Include the images associated with the board
                 .FirstOrDefault(m => m.Id == id);
 
             if (board == null)
@@ -229,7 +229,7 @@ namespace SurfBoardsv2.Controllers
                 Price = board.Price.ToString(),
                 Equipment = board.Equipment,
                 IsAvailable = board.IsAvailable,
-                Images = board.Images.ToList()
+                //Images = board.Images.ToList()
             };
 
             return View(boardViewModel);
@@ -253,7 +253,7 @@ namespace SurfBoardsv2.Controllers
             {
                 // Retrieve the existing board from the database
                 var existingBoard = await _context.Boards
-                    .Include(b => b.Images)
+                    //.Include(b => b.Images)
                     .FirstOrDefaultAsync(b => b.Id == id);
 
                 if (existingBoard == null)
@@ -273,40 +273,40 @@ namespace SurfBoardsv2.Controllers
                 existingBoard.IsAvailable = boardViewModel.IsAvailable;
 
                 // Check if new image files were uploaded
-                if (boardViewModel.ImageFiles != null && boardViewModel.ImageFiles.Count > 0)
-                {
-                    foreach (var file in boardViewModel.ImageFiles)
-                    {
-                        var fileId = Guid.NewGuid();
-                        // Process and save the uploaded image files
-                        var fileName = boardViewModel.Name + "-" + boardViewModel.ImageFiles.Count();// Generate a unique file name
+                //if (boardViewModel.ImageFiles != null && boardViewModel.ImageFiles.Count > 0)
+                //{
+                //    foreach (var file in boardViewModel.ImageFiles)
+                //    {
+                //        var fileId = Guid.NewGuid();
+                //        // Process and save the uploaded image files
+                //        var fileName = boardViewModel.Name + "-" + boardViewModel.ImageFiles.Count();// Generate a unique file name
 
-                        // Get the file extension from the original file name
-                        string fileExtension = Path.GetExtension(fileName);
+                //        // Get the file extension from the original file name
+                //        string fileExtension = Path.GetExtension(fileName);
 
-                        // Generate a unique filename for the image using the imageId and file extension
-                        string uniqueFileName = $"{fileId}{fileExtension}";
+                //        // Generate a unique filename for the image using the imageId and file extension
+                //        string uniqueFileName = $"{fileId}{fileExtension}";
 
-                        // Set the directory where the images will be stored (adjust this path as per your application's requirements)
-                        string imageDirectory = "wwwroot/Images/";
+                //        // Set the directory where the images will be stored (adjust this path as per your application's requirements)
+                //        string imageDirectory = "wwwroot/Images/";
 
-                        // Combine the directory and unique filename to create the full filepath
-                        string filePath = Path.Combine(imageDirectory, uniqueFileName);
+                //        // Combine the directory and unique filename to create the full filepath
+                //        string filePath = Path.Combine(imageDirectory, uniqueFileName);
 
-                        // Create a new BoardImage entity for each uploaded image file
-                        var image = new BoardImage
-                        {
-                            FileName = fileName,
-                            Extension = filePath
-                        };
+                //        // Create a new BoardImage entity for each uploaded image file
+                //        var image = new BoardImage
+                //        {
+                //            FileName = fileName,
+                //            Extension = filePath
+                //        };
 
-                        existingBoard.Images.Add(image);
-                    }
-                }
-                if (existingBoard.MainImageId == null)
-                {
-                    existingBoard.MainImageId = existingBoard.Images.FirstOrDefault().Id;
-                }
+                //        existingBoard.Images.Add(image);
+                //    }
+                //}
+                //if (existingBoard.MainImageId == null)
+                //{
+                //    existingBoard.MainImageId = existingBoard.Images.FirstOrDefault().Id;
+                //}
 
                 // Save the changes to the database
                 _context.Update(existingBoard);

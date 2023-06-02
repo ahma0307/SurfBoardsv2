@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SurfBoardsv2.Data;
 
@@ -11,9 +12,11 @@ using SurfBoardsv2.Data;
 namespace SurfBoardsv2.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230602095449_CCUpdate2")]
+    partial class CCUpdate2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -212,7 +215,7 @@ namespace SurfBoardsv2.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Boards", (string)null);
+                    b.ToTable("Boards");
                 });
 
             modelBuilder.Entity("SurfBoardsv2.Models.BoardImage", b =>
@@ -239,7 +242,7 @@ namespace SurfBoardsv2.Migrations
 
                     b.HasIndex("BoardId");
 
-                    b.ToTable("BoardImages", (string)null);
+                    b.ToTable("BoardImages");
                 });
 
             modelBuilder.Entity("SurfBoardsv2.Models.Rent", b =>
@@ -282,7 +285,7 @@ namespace SurfBoardsv2.Migrations
 
                     b.HasIndex("SurfBoardsv2UserId");
 
-                    b.ToTable("Rents", (string)null);
+                    b.ToTable("Rents");
                 });
 
             modelBuilder.Entity("SurfBoardsv2.Models.SurfBoardsv2User", b =>

@@ -50,9 +50,10 @@ namespace SurfBoardsv2.Models
 
                 // If clearing the database is needed:
 
-                //context.Boards.RemoveRange(context.Boards);
-                //context.BoardImages.RemoveRange(context.BoardImages);
-                //await context.SaveChangesAsync();
+                context.Boards.RemoveRange(context.Boards);
+                context.BoardImages.RemoveRange(context.BoardImages);
+                context.Rents.RemoveRange(context.Rents);
+                await context.SaveChangesAsync();
 
 
 
@@ -211,7 +212,7 @@ namespace SurfBoardsv2.Models
 
                     // Set the directory where the images will be stored (adjust this path as per your application's requirements)
                     string imageDirectory = "wwwroot/Images/";
-              
+
                     // Combine the directory and unique filename to create the full filepath
                     string filePath = Path.Combine(imageDirectory, fileName);
 
@@ -230,7 +231,7 @@ namespace SurfBoardsv2.Models
                     board.MainImageId = fileId;
                     board.MainImageFileName = fileName;
 
-                    context.Boards.Update(board);                    
+                    context.Boards.Update(board);
                 }
 
                 await context.SaveChangesAsync();

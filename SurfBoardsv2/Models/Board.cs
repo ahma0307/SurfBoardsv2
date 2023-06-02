@@ -31,8 +31,8 @@ namespace SurfBoardsv2.Models
         [DataType(DataType.Upload)]
         [Required(AllowEmptyStrings = true)]
         public List<IFormFile>? ImageFiles { get; set; }
-        public ICollection<BoardImage>? Images { get; set;}
-        
+        public ICollection<BoardImage>? Images { get; set; }
+
         public Guid? MainImageId { get; set; }
         public string MainImageFileName { get; set; }
 
