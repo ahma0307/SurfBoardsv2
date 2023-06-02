@@ -8,11 +8,6 @@ using SurfBoardsv2.Core.Repositories;
 using SurfBoardsv2.Core.ViewModels;
 using SurfBoardsv2.Data;
 using SurfBoardsv2.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using SurfBoardsv2.Core;
-using SurfBoardsv2.Data;
 
 namespace SurfBoardsv2.Controllers
 {
@@ -46,9 +41,7 @@ namespace SurfBoardsv2.Controllers
 
             var userRoles = await _signInManager.UserManager.GetRolesAsync(user);
 
-         
 
-       
             var roleItems = roles.Select(role =>
             new SelectListItem(
                 role.Name,

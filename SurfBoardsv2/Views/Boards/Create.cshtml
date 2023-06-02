@@ -19,22 +19,22 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Length" class="control-label"></label>
+                <label asp-for="Length" class="control-label">Length (inches):</label>
                 <input asp-for="Length" class="form-control" />
                 <span asp-validation-for="Length" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Width" class="control-label"></label>
+                <label asp-for="Width" class="control-label">Width (inches):</label>
                 <input asp-for="Width" class="form-control" />
                 <span asp-validation-for="Width" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Thickness" class="control-label"></label>
+                <label asp-for="Thickness" class="control-label">Thickness (inches):</label>
                 <input asp-for="Thickness" class="form-control" />
                 <span asp-validation-for="Thickness" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Volume" class="control-label"></label>
+                <label asp-for="Volume" class="control-label">Volume (litres):</label>
                 <input asp-for="Volume" class="form-control" />
                 <span asp-validation-for="Volume" class="text-danger"></span>
             </div>
@@ -44,7 +44,7 @@
                 <span asp-validation-for="Type" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
+                <label asp-for="Price" class="control-label">Price (€)</label>
                 <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
@@ -54,15 +54,31 @@
                 <span asp-validation-for="Equipment" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PublicBoard" class="control-label"></label>
-                <input asp-for="PublicBoard" class="form-control" />
-                <span asp-validation-for="PublicBoard" class="text-danger"></span>
+                <label asp-for="IsAvailable" class="control-label">Availability</label>
+                <select asp-for="IsAvailable" class="form-control">
+                    <option value="true">Available</option>
+                    <option value="false">Not available</option>
+                </select>
             </div>
             <div class="form-group">
-                <label asp-for="ImageFile"></label>
-                <input asp-for="ImageFile" class="from-control-file" type="file" />
-
+                <label asp-for="ImageFiles" class="control-label">Image Files:</label>
+                <input asp-for="ImageFiles" type="file" multiple />
+                <span asp-validation-for="ImageFiles" class="text-danger"></span>
             </div>
+            @*<div class="form-group">
+                <label class="control-label">Main Image</label><br />
+            </div>*@
+            <div class="form-group">
+                <label asp-for="PublicBoard" class="control-label">PublicBoard</label>
+                <select asp-for="PublicBoard" class="form-control">
+                    <option value="true">PublicBoard</option>
+                    <option value="false">Not PublicBoard</option>
+                </select>
+            </div>
+            <!--<div class="form-group">
+                <label asp-for="ImageFiles"></label>
+                <input asp-for="ImageFiles" class="from-control-file" type="file" />
+            </div>-->
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

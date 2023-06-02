@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SurfBoardsv2.Data;
 
@@ -11,9 +12,11 @@ using SurfBoardsv2.Data;
 namespace SurfBoardsv2.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230530203723_IsMainImageBack")]
+    partial class IsMainImageBack
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -176,11 +179,7 @@ namespace SurfBoardsv2.Migrations
                         .HasColumnType("real");
 
                     b.Property<string>("MainImageFileName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("MainImageId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -188,9 +187,6 @@ namespace SurfBoardsv2.Migrations
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18, 2)");
-
-                    b.Property<bool>("PublicBoard")
-                        .HasColumnType("bit");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -224,11 +220,11 @@ namespace SurfBoardsv2.Migrations
                     b.Property<Guid>("BoardId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Extension")
+                    b.Property<string>("FileName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FileName")
+                    b.Property<string>("FilePath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -246,9 +242,6 @@ namespace SurfBoardsv2.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("BoardId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("BoardRenterId")
@@ -273,8 +266,6 @@ namespace SurfBoardsv2.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BoardId");
 
                     b.HasIndex("SurfBoardsv2UserId");
 
@@ -417,10 +408,6 @@ namespace SurfBoardsv2.Migrations
 
             modelBuilder.Entity("SurfBoardsv2.Models.Rent", b =>
                 {
-                    b.HasOne("SurfBoardsv2.Models.Board", null)
-                        .WithMany("Rents")
-                        .HasForeignKey("BoardId");
-
                     b.HasOne("SurfBoardsv2.Models.SurfBoardsv2User", null)
                         .WithMany("Rents")
                         .HasForeignKey("SurfBoardsv2UserId");
@@ -429,8 +416,6 @@ namespace SurfBoardsv2.Migrations
             modelBuilder.Entity("SurfBoardsv2.Models.Board", b =>
                 {
                     b.Navigation("Images");
-
-                    b.Navigation("Rents");
                 });
 
             modelBuilder.Entity("SurfBoardsv2.Models.SurfBoardsv2User", b =>

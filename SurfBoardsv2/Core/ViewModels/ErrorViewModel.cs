@@ -1,4 +1,4 @@
-namespace SurfBoardsv2.Models
+namespace SurfBoardsv2.Core.ViewModels
 {
     public class ErrorViewModel
     {

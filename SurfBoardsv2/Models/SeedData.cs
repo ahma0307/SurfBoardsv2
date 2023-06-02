@@ -5,25 +5,63 @@ using SurfBoardsv2.Models;
 using SurfBoardsv2.Data;
 using System.Text.Encodings.Web;
 using static System.Net.WebRequestMethods;
-using SurfBoardsv2.Controllers;
+using Microsoft.AspNetCore.Identity;
+using SurfBoardsv2.Core;
+using MessagePack;
+using SurfBoardsv2.Migrations;
 
 namespace SurfBoardsv2.Models
 {
     public static class SeedData
     {
-        public static void Initialize(IServiceProvider serviceProvider)
-        {
 
+        public static async Task Initialize(IServiceProvider serviceProvider)
+        {
             using (var context = new ApplicationDbContext(
-                serviceProvider.GetRequiredService<
-                    DbContextOptions<ApplicationDbContext>>()))
+                serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
             {
-                if (context.Boards.Any())
+                var userManager = serviceProvider.GetRequiredService<UserManager<SurfBoardsv2User>>();
+                var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+                if (!await roleManager.RoleExistsAsync(Constants.Roles.Manager))
+                {
+                    var managerRole = new IdentityRole(Constants.Roles.Manager);
+                    await roleManager.CreateAsync(managerRole);
+                }
+
+                if (!await roleManager.RoleExistsAsync(Constants.Roles.Administrator))
+                {
+                    var adminRole = new IdentityRole(Constants.Roles.Administrator);
+                    await roleManager.CreateAsync(adminRole);
+                }
+
+                //Check if there are any managers in the system
+                var existingManagers = await userManager.GetUsersInRoleAsync(Constants.Roles.Manager);
+
+                if (existingManagers.Count == 0)
+                {
+                    var defaultManager = await userManager.FindByEmailAsync("nikolajvolver@hotmail.com"); // Change to relevant email
+
+                    if (defaultManager != null)
+                    {
+                        await userManager.AddToRoleAsync(defaultManager, Constants.Roles.Manager);
+                    }
+                }
+
+                // If clearing the database is needed:
+
+                //context.Boards.RemoveRange(context.Boards);
+                //context.BoardImages.RemoveRange(context.BoardImages);
+                //await context.SaveChangesAsync();
+
+
+
+                if (await context.Boards.AnyAsync())
                 {
                     return;   // DB has been seeded
                 }
-                
-                context.Boards.AddRange(
+
+                await context.Boards.AddRangeAsync(
                    new Board
                    {
                        Name = "The Minilog",
@@ -34,8 +72,9 @@ namespace SurfBoardsv2.Models
                        Type = "Shortboard",
                        Price = 565,
                        Equipment = "",
-                       ImageFileName = "",
+                       MainImageFileName = "",
                        IsAvailable = true,
+                       PublicBoard = true,
                    },
 
                    new Board
@@ -48,8 +87,9 @@ namespace SurfBoardsv2.Models
                        Type = "Funboard",
                        Price = 685,
                        Equipment = "",
-                       ImageFileName = "",
+                       MainImageFileName = "",
                        IsAvailable = true,
+                       PublicBoard = true,
                    },
 
                    new Board
@@ -62,8 +102,9 @@ namespace SurfBoardsv2.Models
                        Type = "Funboard",
                        Price = 695,
                        Equipment = "",
-                       ImageFileName = "",
+                       MainImageFileName = "",
                        IsAvailable = true,
+                       PublicBoard = true,
                    },
                    new Board
                    {
@@ -75,8 +116,9 @@ namespace SurfBoardsv2.Models
                        Type = "Fish",
                        Price = 645,
                        Equipment = "",
-                       ImageFileName = "",
+                       MainImageFileName = "",
                        IsAvailable = true,
+                       PublicBoard = true,
                    },
                    new Board
                    {
@@ -88,8 +130,9 @@ namespace SurfBoardsv2.Models
                        Type = "Longboard",
                        Price = 895,
                        Equipment = "",
-                       ImageFileName = "",
+                       MainImageFileName = "",
                        IsAvailable = true,
+                       PublicBoard = true,
                    },
                    new Board
                    {
@@ -101,8 +144,9 @@ namespace SurfBoardsv2.Models
                        Type = "Shortboard",
                        Price = 645,
                        Equipment = "",
-                       ImageFileName = "",
+                       MainImageFileName = "",
                        IsAvailable = true,
+                       PublicBoard = true,
                    },
                    new Board
                    {
@@ -114,8 +158,9 @@ namespace SurfBoardsv2.Models
                        Type = "Longboard",
                        Price = 1025,
                        Equipment = "",
-                       ImageFileName = "",
+                       MainImageFileName = "",
                        IsAvailable = true,
+                       PublicBoard = true,
                    },
                    new Board
                    {
@@ -127,8 +172,9 @@ namespace SurfBoardsv2.Models
                        Type = "SUP",
                        Price = 854,
                        Equipment = "Paddle",
-                       ImageFileName = "",
+                       MainImageFileName = "",
                        IsAvailable = true,
+                       PublicBoard = true,
                    },
                    new Board
                    {
@@ -140,8 +186,9 @@ namespace SurfBoardsv2.Models
                        Type = "SUP",
                        Price = 611,
                        Equipment = "Fin, Paddle, Pump, Leash",
-                       ImageFileName = "",
+                       MainImageFileName = "",
                        IsAvailable = true,
+                       PublicBoard = false,
                    },
                    new Board
                    {
@@ -153,13 +200,50 @@ namespace SurfBoardsv2.Models
                        Type = "SUP",
                        Price = 1304,
                        Equipment = "Fin, Paddle, Pump, Leash",
-                       ImageFileName = "",
+                       MainImageFileName = "",
                        IsAvailable = true,
-                       
+                       PublicBoard = false,
+
                    }
                     );
-                context.SaveChanges();
 
+                await context.SaveChangesAsync();
+
+
+                var boards = await context.Boards.ToListAsync();
+
+                for (int i = 0; i < boards.Count(); i++)
+                {
+                    var board = boards[i];
+                    var fileId = Guid.NewGuid();
+                    // Process and save the uploaded image files
+                    var fileName = board.Name + "-" + 1 + ".png".ToString(); // Generate a file name
+
+                    // Set the directory where the images will be stored (adjust this path as per your application's requirements)
+                    string imageDirectory = "wwwroot/Images/";
+              
+                    // Combine the directory and unique filename to create the full filepath
+                    string filePath = Path.Combine(imageDirectory, fileName);
+
+                    // Create a new BoardImage entity for each uploaded image file
+                    var image = new BoardImage
+                    {
+                        FileName = fileName,
+                        Extension = filePath,
+                        BoardId = board.Id,
+                        IsMainImage = true
+                    };
+
+                    await context.BoardImages.AddAsync(image);
+                    await context.SaveChangesAsync();
+
+                    board.MainImageId = fileId;
+                    board.MainImageFileName = fileName;
+
+                    context.Boards.Update(board);                    
+                }
+
+                await context.SaveChangesAsync();
             }
         }
     }

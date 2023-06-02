@@ -8,6 +8,7 @@ using SurfBoardsv2.Core;
 using Constants = SurfBoardsv2.Core.Constants;
 using SurfBoardsv2.Core.Repositories;
 using SurfBoardsv2.Repositories;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +28,8 @@ builder.Services.AddAuthentication()
     {
         options.ClientId = "582965217548-i6dlvsnk4nrvhvpmlde1huaa1d8a9hh6.apps.googleusercontent.com";
         options.ClientSecret = "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";
-    });
+    })
+    .AddCookie();
 
 
 builder.Services.AddDefaultIdentity<SurfBoardsv2User>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -51,7 +53,7 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
-    SeedData.Initialize(services);
+    await SeedData.Initialize(services);
 }
 
 // Configure the HTTP request pipeline.

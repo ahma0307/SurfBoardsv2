@@ -1,4 +1,4 @@
-﻿@model PaginatedList<SurfBoardsv2.Models.Board>
+﻿@model IEnumerable<SurfBoardsv2.Models.Board>
 @using SurfBoardsv2.Models
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<SurfBoardsv2User> SignInManager
@@ -11,12 +11,11 @@
 }
 
 <h1>Boards</h1>
-@if (User.Identity.IsAuthenticated && User.IsInRole("Administrator"))
-{
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
-}
+
+        <p>
+            <a asp-action="Create">Add New Board</a>
+        </p>
+
 <form asp-controller="boards" asp-action="Index" Method="get">
     <p>
         Søgefelt: @Html.TextBox("SearchString")
@@ -27,35 +26,34 @@
     <thead>
         <tr>
             <th>
-                Name
+                @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                Length
+                @Html.DisplayNameFor(model => model.Length)
             </th>
             <th>
-                Width
+                @Html.DisplayNameFor(model => model.Width)
             </th>
             <th>
-                Thickness
-            </th>
-
-            <th>
-                Volume
+                @Html.DisplayNameFor(model => model.Thickness)
             </th>
             <th>
-                Type
+                @Html.DisplayNameFor(model => model.Volume)
             </th>
             <th>
-                Price
+                @Html.DisplayNameFor(model => model.Type)
             </th>
             <th>
-                Equipment
+                @Html.DisplayNameFor(model => model.Price)
             </th>
             <th>
-                ImageFile
+                @Html.DisplayNameFor(model => model.Equipment)
             </th>
             <th>
-                IsAvailable
+                @Html.DisplayNameFor(model => model.MainImageId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsAvailable)
             </th>
             <th>
                 PublicBoard
@@ -66,10 +64,10 @@
     </thead>
 
     <tbody>
+
         @foreach (var board in Model)
         {
-            @if (User.Identity.IsAuthenticated || board.PublicBoard)
-            {
+            
                 <tr>
                     <td>@board.Name</td>
                     <td>@board.Length"</td>
@@ -81,44 +79,40 @@
                     <td>@board.Equipment</td>
                     <td>@board.PublicBoard</td>
                     <td>
-                        <img src="@Url.Content("~/Images/"+board.ImageFileName)" style="height:25%;width:25%;object-fit:cover;" />
+                        <img src="@Url.Content("~/Images/"+board.ImageFiles)" style="height:25%;width:25%;object-fit:cover;" />
                     </td>
                     <td>@(board.IsAvailable ? "Ledig" : "Ikke Ledig")</td>
                     <td>
                         <a asp-action="Details" asp-route-id="@board.Id">Details</a>
-                        @if (User.Identity.IsAuthenticated && User.IsInRole("Administrator"))
-                        {
+                        
                             <a asp-action="Edit" asp-route-id="@board.Id">Edit</a>
                             <a asp-action="Delete" asp-route-id="@board.Id">Delete</a>
-                        }
-                        @if (SignInManager.IsSignedIn(User) && board.IsAvailable)
-                        {
+                        
+                        
                             <a asp-action="Create" asp-controller="Rent" asp-route-boardId="@board.Id" asp-route-userId="@UserManager.GetUserId(User)" class="btn btn-primary">Rent</a>
-                        }
+                        
                     </td>
                 </tr>
             }
-        }
+        
         <p id="p1">
         </p>
     </tbody>
 </table>
-@{
-    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
-    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
-}
+<div>
+    <ul class="pagination">
+        <li class="page-item @(Convert.ToBoolean(ViewData["HasPreviousPage"]) ? "" : "disabled")">
+            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Convert.ToInt32(ViewData["PageIndex"]) - 1)" asp-route-currentFilter="@ViewData["CurrentFilter"]">Previous</a>
+        </li>
+        @for (var i = 1; i <= Convert.ToInt32(ViewData["TotalPages"]); i++)
+        {
+            <li class="page-item @(i == Convert.ToInt32(ViewData["PageIndex"]) ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-pageNumber="@i" asp-route-currentFilter="@ViewData["CurrentFilter"]">@i</a>
+            </li>
+        }
+        <li class="page-item @(Convert.ToBoolean(ViewData["HasNextPage"]) ? "" : "disabled")">
+            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Convert.ToInt32(ViewData["PageIndex"]) + 1)" asp-route-currentFilter="@ViewData["CurrentFilter"]">Next</a>
+        </li>
+    </ul>
+</div>
 
-<a asp-action="Index"
-   asp-route-sortOrder="@ViewData["CurrentSort"]"
-   asp-route-pageNumber="@(Model.PageIndex - 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   class="btn btn-default @prevDisabled">
-    Previous
-</a>
-<a asp-action="Index"
-   asp-route-sortOrder="@ViewData["CurrentSort"]"
-   asp-route-pageNumber="@(Model.PageIndex + 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   class="btn btn-default @nextDisabled">
-    Next
-</a>
