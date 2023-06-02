@@ -72,6 +72,12 @@ namespace SurfBoardsv2.Controllers
                              where !rentedBoardIds.Contains(m.Id) // Filter out boards that are currently rented out
                              select m;
 
+            // If user is not authenticated, only select boards where PublicBoard is true
+            if (!User.Identity.IsAuthenticated)
+            {
+                boardQuery = boardQuery.Where(b => b.PublicBoard == true);
+            }
+
             if (!string.IsNullOrEmpty(searchString))
             {
                 boardQuery = boardQuery.Where(s => s.Name.Contains(searchString));

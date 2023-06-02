@@ -62,49 +62,7 @@ namespace SurfBoardsv2.Controllers
             return View(rent);
         }
 
-        //GET: Rents/AdminCreate
-        [Authorize(Roles = "Admin,Manager")]
-        public IActionResult AdminCreate()
-        {
-            var currentDate = DateTime.Now.Date;
-
-            if (currentDate.DayOfWeek == DayOfWeek.Saturday)
-            {
-                currentDate = currentDate.AddDays(2);
-            }
-            else if (currentDate.DayOfWeek == DayOfWeek.Sunday)
-            {
-                currentDate = currentDate.AddDays(1);
-            }
-
-            var initialRentPickDate = currentDate;
-
-            var nextWeekday = currentDate.AddDays(1);
-
-            while (nextWeekday.DayOfWeek == DayOfWeek.Saturday || nextWeekday.DayOfWeek == DayOfWeek.Sunday)
-            {
-                nextWeekday = nextWeekday.AddDays(1);
-            }
-
-            var initialRentDropDate = nextWeekday;
-
-            //Fetching from Database
-            var rents = _context.Rents.ToList();
-            var boards = _context.Boards.ToList();
-            var users = _context.Users.ToList();
-
-            //Supplies RentViewModel with the data needed for the view
-            var rentViewModels = rents.Select(rent => new RentViewModel
-            {
-                Id = rent.Id,
-                RentPickDate = rent.RentPickDate,
-                RentDropDate = rent.RentDropDate,
-                BoardName = boards.Find(x => x.Id == rent.RentedBoardId).Name,
-                UserFullName = users.Find(x => x.Id == rent.BoardRenterId.ToString()).GetFullName()
-            }).ToList();
-
-            return View();
-        }
+        
 
         // GET: Rents/Create
         [Authorize]
@@ -182,7 +140,7 @@ namespace SurfBoardsv2.Controllers
                             return View(rent);
                         }
                     }
-
+                    
                     rent.TimeOfOrder = DateTime.Now;
                     await _context.Rents.AddAsync(rent);
                     await _context.SaveChangesAsync();
@@ -209,7 +167,107 @@ namespace SurfBoardsv2.Controllers
             return RedirectToAction("Confirmation", rent);
         }
 
+        // GET: Rents/Create
+        
+        public async Task<IActionResult> CreateNotLoggedIn(Guid boardId)
+        {
 
+            var board = await _context.Boards.FindAsync(boardId);
+
+            var currentDate = DateTime.Now.Date;
+
+            if (currentDate.DayOfWeek == DayOfWeek.Saturday)
+            {
+                currentDate = currentDate.AddDays(2);
+            }
+            else if (currentDate.DayOfWeek == DayOfWeek.Sunday)
+            {
+                currentDate = currentDate.AddDays(1);
+            }
+
+            var initialRentPickDate = currentDate;
+
+            var nextWeekday = currentDate.AddDays(1);
+
+            while (nextWeekday.DayOfWeek == DayOfWeek.Saturday || nextWeekday.DayOfWeek == DayOfWeek.Sunday)
+            {
+                nextWeekday = nextWeekday.AddDays(1);
+            }
+
+            var initialRentDropDate = nextWeekday;
+
+            var rent = new Rent
+            {
+                RentPickDate = initialRentPickDate,
+                RentDropDate = initialRentDropDate,
+                RentedBoardId = board.Id,
+                BoardRenterId = Guid.NewGuid(),
+            };
+
+            var model = new Tuple<Rent, Board>(rent, board);
+
+            return View(model);
+        }
+
+
+        // POST: Rents/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateNotLoggedIn([Bind("Id,RentPickDate,RentDropDate,RentedBoardId,BoardRenterId,BoardRenterFirstName,BoardRenterLastName,BoardRenterEmail")] Rent rent)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var error in errors)
+                {
+                    System.Diagnostics.Debug.WriteLine(error.ErrorMessage);
+                }
+                return View(rent);
+            }
+
+            bool saved = false;
+            while (!saved)
+            {
+                try
+                {
+                    var board = await _context.Boards.FindAsync(rent.RentedBoardId);
+                    var otherRents = await _context.Rents.Where(x => x.RentedBoardId == board.Id).ToListAsync();
+
+                    foreach (var otherRent in otherRents)
+                    {
+                        if (otherRent.RentPickDate <= rent.RentDropDate && otherRent.RentDropDate >= rent.RentPickDate)
+                        {
+                            return View(rent);
+                        }
+                    }
+
+                    rent.TimeOfOrder = DateTime.Now;
+                    await _context.Rents.AddAsync(rent);
+                    await _context.SaveChangesAsync();
+                    saved = true;
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    foreach (var entry in _context.ChangeTracker.Entries())
+                    {
+                        if (entry.State == EntityState.Modified)
+                        {
+                            entry.Reload();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                    ModelState.AddModelError("", "Unable to save changes. An error occurred while updating the entries. ");
+                    return View(rent);
+                }
+            }
+
+            return RedirectToAction("ConfirmationNotLoggedIn", rent);
+        }
 
         // GET: Rents/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
@@ -277,6 +335,15 @@ namespace SurfBoardsv2.Controllers
             var user = await _context.Users.FindAsync(rent.BoardRenterId.ToString());
 
             var model = new Tuple<Rent, Board, SurfBoardsv2User>(rent, board, user);
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> ConfirmationNotLoggedIn(Rent rent)
+        {
+            var board = await _context.Boards.FindAsync(rent.RentedBoardId);
+            
+            var model = new Tuple<Rent, Board>(rent, board);
 
             return View(model);
         }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SurfBoardsv2.Data;
 
@@ -11,9 +12,11 @@ using SurfBoardsv2.Data;
 namespace SurfBoardsv2.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230602182634_CreateNotLoggedin")]
+    partial class CreateNotLoggedin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -249,20 +252,17 @@ namespace SurfBoardsv2.Migrations
                     b.Property<Guid?>("BoardId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("BoardRenterEmail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("BoardRenterFirstName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("BoardRenterId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("BoardRenterLastName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("BoardRenterPhoneNumber")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("RentDropDate")
                         .HasColumnType("datetime2");

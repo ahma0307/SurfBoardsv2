@@ -53,12 +53,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.Equipment)
             </th>
-            <th>
+            @*<th>
                 @Html.DisplayNameFor(model => model.MainImageId)
-            </th>
-            <th>
+            </th>*@
+@*            <th>
                 @Html.DisplayNameFor(model => model.IsAvailable)
-            </th>
+            </th>*@
             <th></th>
         </tr>
     </thead>
@@ -103,6 +103,10 @@
                     @if (SignInManager.IsSignedIn(User) && board.IsAvailable)
                     {
                         <a asp-action="Create" asp-controller="Rent" asp-route-boardId="@board.Id" asp-route-userId="@UserManager.GetUserId(User)" class="btn btn-primary">Rent</a>
+                    }
+                    @if (UserManager.GetUserId(User) == null)
+                    {
+                        <a asp-action="CreateNotLoggedIn" asp-controller="Rent" asp-route-boardId="@board.Id" class="btn btn-primary">Rent</a>
                     }
                 </td>
             </tr>

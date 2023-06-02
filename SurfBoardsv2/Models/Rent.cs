@@ -22,5 +22,6 @@ namespace SurfBoardsv2.Models
 
         [Timestamp]
         public byte[]? RowVersion { get; set; }
+
     }
 }
