@@ -8,19 +8,19 @@ namespace SurfBoardsv2.Models
     public class Rent
     {
         public Guid Id { get; set; }
-
-        [ConcurrencyCheck]
         public DateTime TimeOfOrder { get; set; }
-        [ConcurrencyCheck]
+        
         public DateTime RentPickDate { get; set; }
-        [ConcurrencyCheck]
+        
         public DateTime RentDropDate { get; set; }
 
         // Foreign keys
+        [ConcurrencyCheck]
         public Guid RentedBoardId { get; set; }
+        
         public Guid BoardRenterId { get; set; }
 
-        //[Timestamp]
-        //public byte[] RowVersion { get; set; }
+        [Timestamp]
+        public byte[]? RowVersion { get; set; }
     }
 }

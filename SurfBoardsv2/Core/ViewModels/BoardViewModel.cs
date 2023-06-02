@@ -8,7 +8,7 @@ namespace SurfBoardsv2.Core.ViewModels
 {
     public class BoardViewModel
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         [Required(ErrorMessage = "Name is required.")]
         public string Name { get; set; }
         [Required(ErrorMessage = "Length is required.")]
@@ -35,6 +35,7 @@ namespace SurfBoardsv2.Core.ViewModels
         public string MainImageFilePath { get; set; }
         public bool IsAvailable { get; set; }
 
+        public byte[] RowVersion { get; set; }
 
     }
 }

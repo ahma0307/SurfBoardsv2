@@ -40,7 +40,7 @@ namespace SurfBoardsv2.Models
 
                 if (existingManagers.Count == 0)
                 {
-                    var defaultManager = await userManager.FindByEmailAsync("nikolajvolver@hotmail.com"); // Change to relevant email
+                    var defaultManager = await userManager.FindByEmailAsync("test@test.com"); // Change to relevant email
 
                     if (defaultManager != null)
                     {
@@ -52,6 +52,7 @@ namespace SurfBoardsv2.Models
 
                 //context.Boards.RemoveRange(context.Boards);
                 //context.BoardImages.RemoveRange(context.BoardImages);
+                //context.Rents.RemoveRange(context.Rents);
                 //await context.SaveChangesAsync();
 
 
@@ -211,7 +212,7 @@ namespace SurfBoardsv2.Models
 
                     // Set the directory where the images will be stored (adjust this path as per your application's requirements)
                     string imageDirectory = "wwwroot/Images/";
-              
+
                     // Combine the directory and unique filename to create the full filepath
                     string filePath = Path.Combine(imageDirectory, fileName);
 
@@ -230,7 +231,7 @@ namespace SurfBoardsv2.Models
                     board.MainImageId = fileId;
                     board.MainImageFileName = fileName;
 
-                    context.Boards.Update(board);                    
+                    context.Boards.Update(board);
                 }
 
                 await context.SaveChangesAsync();

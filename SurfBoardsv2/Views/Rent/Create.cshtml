@@ -37,7 +37,9 @@
                 </div>
                 <input type="hidden" name="RentedBoardId" value="@Model.Item2.Id" />
                 <input type="hidden" name="BoardRenterId" value="@Model.Item3.Id" />
-              
+                <td>
+                    <img src="@Url.Content("~/Images/"+Model.Item2.MainImageFileName)" style="height:25%;width:25%;object-fit:cover;" />
+                </td>
                 <button id="rent-surfboard-button" type="submit" class="w-100 btn btn-lg btn-primary">Rent</button>
 
                 <script>

@@ -141,7 +141,7 @@ namespace SurfBoardsv2.Controllers
                 RentPickDate = initialRentPickDate,
                 RentDropDate = initialRentDropDate,
                 RentedBoardId = board.Id,
-                BoardRenterId = Guid.Parse(user.Id)
+                BoardRenterId = Guid.Parse(user.Id),
             };
 
             var model = new Tuple<Rent, Board, SurfBoardsv2User>(rent, board, user);
@@ -153,10 +153,9 @@ namespace SurfBoardsv2.Controllers
         // POST: Rents/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RentPickDate,RentDropDate,RentedBoardId,BoardRenterId")] Rent rent)
+        public async Task<IActionResult> Create([Bind("Id,RentPickDate,RentDropDate,RentedBoardId,BoardRenterId")] Rent rent)
         {
             if (!ModelState.IsValid)
             {
@@ -168,14 +167,48 @@ namespace SurfBoardsv2.Controllers
                 return View(rent);
             }
 
-            rent.TimeOfOrder = DateTime.Now;
-            rent.Id = Guid.NewGuid();
+            bool saved = false;
+            while (!saved)
+            {
+                try
+                {
+                    var board = await _context.Boards.FindAsync(rent.RentedBoardId);
+                    var otherRents = await _context.Rents.Where(x => x.RentedBoardId == board.Id).ToListAsync();
 
-            _context.Add(rent);
-            await _context.SaveChangesAsync();
+                    foreach (var otherRent in otherRents)
+                    {
+                        if (otherRent.RentPickDate <= rent.RentDropDate && otherRent.RentDropDate >= rent.RentPickDate)
+                        {
+                            return View(rent);
+                        }
+                    }
+
+                    rent.TimeOfOrder = DateTime.Now;
+                    await _context.Rents.AddAsync(rent);
+                    await _context.SaveChangesAsync();
+                    saved = true;
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    foreach (var entry in _context.ChangeTracker.Entries())
+                    {
+                        if (entry.State == EntityState.Modified)
+                        {
+                            entry.Reload();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                    ModelState.AddModelError("", "Unable to save changes. An error occurred while updating the entries. ");
+                    return View(rent);
+                }
+            }
 
             return RedirectToAction("Confirmation", rent);
         }
+
 
 
         // GET: Rents/Edit/5
@@ -207,7 +240,7 @@ namespace SurfBoardsv2.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Manager")]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,RentPickDate,RentDropDate,SurfBoardModels,UserId")] Rent rent)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,RentPickDate,RentDropDate,RentedBoardId,BoardRenterId")] Rent rent)
         {
             if (id != rent.Id)
             {
