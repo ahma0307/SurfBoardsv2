@@ -36,6 +36,19 @@ namespace SurfBoardsv2.Controllers
         
         public async Task<IActionResult> Index(string currentFilter, string searchString, int? pageNumber)
         {
+            var model = await _context.Boards.ToListAsync();
+
+            if (!User.Identity.IsAuthenticated)
+            {
+                var publicBoards = await _context.Boards
+            .Where(b => b.PublicBoard)
+            .ToListAsync();
+
+                ViewBag.PublicBoards = publicBoards;
+
+                return View(model);
+            }
+        
             //Making boards unavailable if they appear in a rent in the time period
             if (await _context.Rents.AnyAsync())
             {
@@ -73,25 +86,27 @@ namespace SurfBoardsv2.Controllers
             }
 
             ViewData["CurrentFilter"] = searchString;
-            //The first line of the Index action method creates a LINQ query to select the boards:
-            var board = from m in _context.Boards
-                         select m;//The query is only defined at this point, it has not been run against the database
 
-            if (!string.IsNullOrEmpty(searchString)) // If the searchString parameter contains a string, the movies query is modified to filter on the value of the search string:
+            var boards = from m in _context.Boards
+                         select m;
+
+            if (!string.IsNullOrEmpty(searchString))
             {
-                board = board.Where(s => s.Name!.Contains(searchString));
-                           
-                
-                //The s => s.Title!.Contains(searchString) code above is a Lambda Expression.
+                boards = boards.Where(s => s.Name.Contains(searchString));
             }
 
-
-
             int pageSize = 3;
-            return View(await PaginatedList<Board>.CreateAsync(board.AsNoTracking(), pageNumber ?? 1, pageSize));
+            var paginatedBoards = await PaginatedList<Board>.CreateAsync(boards.AsNoTracking(), pageNumber ?? 1, pageSize);
+            return View(paginatedBoards);
 
         }
-        
+        public async Task<IActionResult> PublicBoards()
+        {
+            var publicBoards = await _context.Boards
+                .Where(b => b.PublicBoard)
+                .ToListAsync();
+            return View(publicBoards);
+        }
 
         // GET: Boards/Details/5
         public async Task<IActionResult> Details(Guid? id)
@@ -123,7 +138,7 @@ namespace SurfBoardsv2.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = Constants.Policies.RequireAdmin)]
-        public async Task<IActionResult> Create([Bind("Id,Name,Length,Width,Thickness,volume,type,Price,Equipment, ImageFile, ImageFileName, IsAvailable")] Board board)
+        public async Task<IActionResult> Create([Bind("Id,Name,Length,Width,Thickness,volume,type,Price,Equipment, ImageFile, ImageFileName, IsAvailable, PublicBoard")] Board board)
         {
 
             if (ModelState.IsValid)
@@ -186,7 +201,7 @@ namespace SurfBoardsv2.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = Constants.Policies.RequireAdmin)]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Length,Width,Thickness,volume,type,Price,Equipment, ImageFile, ImageFileName, IsAvailable")] Board board)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Length,Width,Thickness,volume,type,Price,Equipment, ImageFile, ImageFileName, IsAvailable, PublicBoard")] Board board)
         {
             if (id != board.Id)
             {

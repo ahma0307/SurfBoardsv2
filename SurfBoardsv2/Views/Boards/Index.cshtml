@@ -57,39 +57,47 @@
             <th>
                 IsAvailable
             </th>
+            <th>
+                PublicBoard
+            </th>
+
             <th></th>
         </tr>
     </thead>
-    
+
     <tbody>
         @foreach (var board in Model)
         {
-            <tr>
-                <td>@board.Name</td>
-                <td>@board.Length"</td>
-                <td>@board.Width"</td>
-                <td>@board.Thickness"</td>
-                <td>@board.Volume l</td>
-                <td>@board.Type</td>
-                <td>@board.Price €</td>
-                <td>@board.Equipment</td>
-                <td>
-                    <img src="@Url.Content("~/Images/"+board.ImageFileName)" style="height:25%;width:25%;object-fit:cover;" />
-                </td>
-                <td>@(board.IsAvailable ? "Ledig" : "Ikke Ledig")</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@board.Id">Details</a>
-                    @if (User.Identity.IsAuthenticated && User.IsInRole("Administrator"))
-                    {
-                        <a asp-action="Edit" asp-route-id="@board.Id">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@board.Id">Delete</a>
-                    }
-                    @if (SignInManager.IsSignedIn(User) && board.IsAvailable)
-                    {
-                        <a asp-action="Create" asp-controller="Rent" asp-route-boardId="@board.Id" asp-route-userId="@UserManager.GetUserId(User)" class="btn btn-primary">Rent</a>
-                    }
-                </td>
-            </tr>
+            @if (User.Identity.IsAuthenticated || board.PublicBoard)
+            {
+                <tr>
+                    <td>@board.Name</td>
+                    <td>@board.Length"</td>
+                    <td>@board.Width"</td>
+                    <td>@board.Thickness"</td>
+                    <td>@board.Volume l</td>
+                    <td>@board.Type</td>
+                    <td>@board.Price €</td>
+                    <td>@board.Equipment</td>
+                    <td>@board.PublicBoard</td>
+                    <td>
+                        <img src="@Url.Content("~/Images/"+board.ImageFileName)" style="height:25%;width:25%;object-fit:cover;" />
+                    </td>
+                    <td>@(board.IsAvailable ? "Ledig" : "Ikke Ledig")</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@board.Id">Details</a>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Administrator"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@board.Id">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@board.Id">Delete</a>
+                        }
+                        @if (SignInManager.IsSignedIn(User) && board.IsAvailable)
+                        {
+                            <a asp-action="Create" asp-controller="Rent" asp-route-boardId="@board.Id" asp-route-userId="@UserManager.GetUserId(User)" class="btn btn-primary">Rent</a>
+                        }
+                    </td>
+                </tr>
+            }
         }
         <p id="p1">
         </p>
