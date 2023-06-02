@@ -35,6 +35,7 @@ namespace SurfBoardsv2.Core.ViewModels
         public string MainImageFilePath { get; set; }
         public bool IsAvailable { get; set; }
 
+        public byte[] RowVersion { get; set; }
 
     }
 }

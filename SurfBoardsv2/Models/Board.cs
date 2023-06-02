@@ -29,21 +29,20 @@ namespace SurfBoardsv2.Models
         [NotMapped]
         [DisplayName("Upload file")]
         [DataType(DataType.Upload)]
-        [Required(AllowEmptyStrings = true)]
         public List<IFormFile>? ImageFiles { get; set; }
         public ICollection<BoardImage>? Images { get; set; }
 
         public Guid? MainImageId { get; set; }
-        public string MainImageFileName { get; set; }
+        public string? MainImageFileName { get; set; }
 
         [ConcurrencyCheck]
         public bool IsAvailable { get; set; }
 
-        public bool PublicBoard { get; set; }
-        public ICollection<Rent> Rents { get; set; }
+        public bool? PublicBoard { get; set; }
+        public ICollection<Rent>? Rents { get; set; }
 
         [Timestamp]
-        public byte[] RowVersion { get; set; }
+        public byte[]? RowVersion { get; set; }
 
     }
 

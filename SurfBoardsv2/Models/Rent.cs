@@ -17,9 +17,10 @@ namespace SurfBoardsv2.Models
         // Foreign keys
         [ConcurrencyCheck]
         public Guid RentedBoardId { get; set; }
+        
         public Guid BoardRenterId { get; set; }
 
-        //[Timestamp]
-        //public byte[] RowVersion { get; set; }
+        [Timestamp]
+        public byte[]? RowVersion { get; set; }
     }
 }

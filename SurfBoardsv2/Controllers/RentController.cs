@@ -155,7 +155,7 @@ namespace SurfBoardsv2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RentPickDate,RentDropDate,RentedBoardId,BoardRenterId,RowVersion")] Rent rent)
+        public async Task<IActionResult> Create([Bind("Id,RentPickDate,RentDropDate,RentedBoardId,BoardRenterId")] Rent rent)
         {
             if (!ModelState.IsValid)
             {
@@ -167,36 +167,48 @@ namespace SurfBoardsv2.Controllers
                 return View(rent);
             }
 
-            var board = await _context.Boards.FindAsync(rent.RentedBoardId);
-            var otherRents = await _context.Rents.Where(x => x.RentedBoardId == board.Id).ToListAsync();
-
-            foreach (var otherRent in otherRents)
+            bool saved = false;
+            while (!saved)
             {
-                if (otherRent.RentPickDate <= rent.RentDropDate && otherRent.RentDropDate >= rent.RentPickDate)
+                try
                 {
+                    var board = await _context.Boards.FindAsync(rent.RentedBoardId);
+                    var otherRents = await _context.Rents.Where(x => x.RentedBoardId == board.Id).ToListAsync();
+
+                    foreach (var otherRent in otherRents)
+                    {
+                        if (otherRent.RentPickDate <= rent.RentDropDate && otherRent.RentDropDate >= rent.RentPickDate)
+                        {
+                            return View(rent);
+                        }
+                    }
+
+                    rent.TimeOfOrder = DateTime.Now;
+                    await _context.Rents.AddAsync(rent);
+                    await _context.SaveChangesAsync();
+                    saved = true;
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    foreach (var entry in _context.ChangeTracker.Entries())
+                    {
+                        if (entry.State == EntityState.Modified)
+                        {
+                            entry.Reload();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                    ModelState.AddModelError("", "Unable to save changes. An error occurred while updating the entries. ");
                     return View(rent);
                 }
             }
 
-            rent.TimeOfOrder = DateTime.Now;
-            
-
-            try
-            {
-                _context.Add(rent);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("Confirmation", rent);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                ModelState.AddModelError("", "Unable to save changes. " +
-                "The record you attempted to edit was modified by another user after you got the original values. " +
-                "The edit operation was canceled and the current values in the database have been displayed. " +
-                "If you still want to edit this record, click the Save button again. ");
-            }
-            return View(rent);
+            return RedirectToAction("Confirmation", rent);
         }
+
 
 
         // GET: Rents/Edit/5

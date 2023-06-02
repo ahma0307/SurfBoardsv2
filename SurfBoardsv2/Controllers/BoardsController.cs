@@ -320,7 +320,7 @@ namespace SurfBoardsv2.Controllers
 
 
         // GET: Boards/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             if (id == null || _context.Boards == null)
             {
@@ -340,7 +340,7 @@ namespace SurfBoardsv2.Controllers
         // POST: Boards/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Policy = Constants.Policies.RequireAdmin)]
+        [Authorize(Policy = Constants.Policies.RequireManager)]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             if (_context.Boards == null)

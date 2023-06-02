@@ -14,27 +14,27 @@
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
+                <label asp-for="Name" class="control-label"></label><span class="text-danger">*</span>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Length" class="control-label">Length (inches):</label>
+                <label asp-for="Length" class="control-label">Length (inches):</label><span class="text-danger">*</span>
                 <input asp-for="Length" class="form-control" />
                 <span asp-validation-for="Length" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Width" class="control-label">Width (inches):</label>
+                <label asp-for="Width" class="control-label">Width (inches):</label><span class="text-danger">*</span>
                 <input asp-for="Width" class="form-control" />
                 <span asp-validation-for="Width" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Thickness" class="control-label">Thickness (inches):</label>
+                <label asp-for="Thickness" class="control-label">Thickness (inches):</label><span class="text-danger">*</span>
                 <input asp-for="Thickness" class="form-control" />
                 <span asp-validation-for="Thickness" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Volume" class="control-label">Volume (litres):</label>
+                <label asp-for="Volume" class="control-label">Volume (litres):</label><span class="text-danger">*</span>
                 <input asp-for="Volume" class="form-control" />
                 <span asp-validation-for="Volume" class="text-danger"></span>
             </div>
@@ -44,7 +44,7 @@
                 <span asp-validation-for="Type" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Price" class="control-label">Price (€)</label>
+                <label asp-for="Price" class="control-label">Price (€)</label><span class="text-danger">*</span>
                 <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
@@ -54,7 +54,7 @@
                 <span asp-validation-for="Equipment" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="IsAvailable" class="control-label">Availability</label>
+                <label asp-for="IsAvailable" class="control-label">Availability</label><span class="text-danger">*</span>
                 <select asp-for="IsAvailable" class="form-control">
                     <option value="true">Available</option>
                     <option value="false">Not available</option>
@@ -70,7 +70,7 @@
             </div>*@
 
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <button id="create-surfboard-button" type="submit" class="w-100 btn btn-lg btn-primary">Create</button>
             </div>
         </form>
     </div>
